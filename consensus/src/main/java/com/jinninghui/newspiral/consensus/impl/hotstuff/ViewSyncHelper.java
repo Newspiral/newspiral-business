@@ -69,10 +69,7 @@ public class ViewSyncHelper {
                     log.info(ModuleClassification.ConM_NSHP_.toString() + " peer may be not available:" + peer.getPeerId().toString());
                     return;
                 }
-                //Long ttt = System.currentTimeMillis();
-                //log.info("test for queryviewNo, time1:" + ttt.toString());
                 QueryViewNoResp queryViewNoResp = p2pClient.queryViewNo(queryViewNoReq, peer);
-                //log.info("test for queryviewNo, time2:" + (System.currentTimeMillis() - ttt));
                 if (null != queryViewNoResp) {
                     viewNoRespMap.put(peer.getPeerId().getValue(), queryViewNoResp);
                 } else {
