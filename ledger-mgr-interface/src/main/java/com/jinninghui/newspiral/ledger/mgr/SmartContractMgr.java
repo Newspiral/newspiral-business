@@ -16,9 +16,16 @@ public interface SmartContractMgr {
 /******************** StateStorage 的接口开始**************************/
     byte[] getState(String key);
 
+    String getStrState(String key);
+
     void insertState(String key, byte[] value);
 
+    void insertStrState(String key, String value);
+
     void updateState(String key, byte[] newValue);
+
+
+    void updateStrState(String key, String value);
 
 
 
@@ -28,6 +35,9 @@ public interface SmartContractMgr {
      * @param value
      */
     void putState(String key, byte[] value);
+
+
+    void putStrState(String key, String value);
 
     boolean existKey(String key);
 

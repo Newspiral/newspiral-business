@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +41,20 @@ public class SmartContractMgrImpl implements SmartContractMgr {
     }
 
     @Override
+    public String getStrState(String key) {
+        return new String(ledgerMgr.queryState(key),StandardCharsets.UTF_8);
+    }
+
+    @Override
     public void insertState(String key, byte[] value) {
         //log.info("调用智能合约插入世界状态key=" + key);
         ledgerMgr.insertState(key, value);
+    }
+
+    @Override
+    public void insertStrState(String key, String value) {
+        //log.info("调用智能合约插入世界状态key=" + key);
+        ledgerMgr.insertState(key, value.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
@@ -53,9 +65,23 @@ public class SmartContractMgrImpl implements SmartContractMgr {
     }
 
     @Override
+    public void updateStrState(String key, String newValue) {
+        ledgerMgr.updateState(key, newValue.getBytes(StandardCharsets.UTF_8));
+    }
+
+
+    @Override
     public void putState(String key, byte[] value) {
         //Long curr = System.currentTimeMillis();
         ledgerMgr.putState(key, value);
+        //log.info("put state time {}", System.currentTimeMillis() - curr);
+    }
+
+
+    @Override
+    public void putStrState(String key, String value) {
+        //Long curr = System.currentTimeMillis();
+        ledgerMgr.putState(key, value.getBytes(StandardCharsets.UTF_8));
         //log.info("put state time {}", System.currentTimeMillis() - curr);
     }
 
