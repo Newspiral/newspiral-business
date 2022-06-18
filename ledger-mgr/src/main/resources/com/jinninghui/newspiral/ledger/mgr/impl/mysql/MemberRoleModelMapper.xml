@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.MemberRoleMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberRoleModel">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="MEMBER_ID" jdbcType="BIGINT" property="memberId" />
+    <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID,MEMBER_ID, ROLE_ID,CHANNEL_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MEMBER_ROLE
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByMemberId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MEMBER_ROLE
+    where MEMBER_ID = #{memberId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MEMBER_ROLE
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from MEMBER_ROLE
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByMemberId" parameterType="java.lang.Long">
+    delete from MEMBER_ROLE
+    where MEMBER_ID = #{memberId,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberRoleModel">
+    replace into MEMBER_ROLE (MEMBER_ID, ROLE_ID,CHANNEL_ID
+      )
+    values (#{memberId,jdbcType=BIGINT}, #{roleId,jdbcType=VARCHAR},
+     #{channelId,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberRoleModel">
+    update MEMBER_ROLE
+    <set>
+      <if test="memberId != null">
+        MEMBER_ID = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null">
+        ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="channelId != null">
+        CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <delete id="deleteByChannelId" parameterType="java.lang.String">
+    delete from MEMBER_ROLE
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="delCustomRoleRelation" parameterType="java.lang.String">
+    delete from MEMBER_ROLE
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </delete>
+
+</mapper>

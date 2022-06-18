@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.TransactionModelMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.TransactionModel">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="VERSION" jdbcType="VARCHAR" property="version" />
+    <result column="POOLED_TRANS_VERSION" jdbcType="VARCHAR" property="pooledTransVersion" />
+    <result column="ADD2_POOL_TIMESTAMP" jdbcType="TIMESTAMP" property="add2PoolTimestamp" />
+    <result column="TRANS_HASH_STR" jdbcType="VARCHAR" property="transHashStr" />
+    <result column="SDK_TRANS_VERSION" jdbcType="VARCHAR" property="sdkTransVersion" />
+    <result column="CLIENT_TIMESTAMP" jdbcType="TIMESTAMP" property="clientTimestamp" />
+    <result column="CLIENT_TRANS_ID" jdbcType="VARCHAR" property="clientTransId" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="SMART_CONTRACT_ID" jdbcType="VARCHAR" property="smartContractId" />
+    <result column="SMART_CONTRACT_METHOD_NAME" jdbcType="VARCHAR" property="smartContractMethodName" />
+    <result column="CLIENT_IDENTITY_KEY" jdbcType="VARCHAR" property="clientIdentityKey" />
+    <result column="EXECUTE_TIMESTAMP" jdbcType="TIMESTAMP" property="executeTimestamp" />
+    <result column="EXECUTED_MS" jdbcType="BIGINT" property="executedMs" />
+    <result column="BLOCK_HASH_STR" jdbcType="VARCHAR" property="blockHash" />
+    <result column="INDEX_IN_BLOCK" jdbcType="INTEGER" property="indexInBlock" />
+    <result column="SUCCESSED" jdbcType="TINYINT" property="successed" />
+    <result column="ERROR_MSG" jdbcType="VARCHAR" property="errorMsg" />
+    <result column="CREATE_TIMESTAMP" jdbcType="TIMESTAMP" property="createTimestamp" />
+    <result column="BLOCK_ID" jdbcType="BIGINT" property="blockId"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.TransactionModelWithBLOBs">
+    <result column="POOLED_TRANS" jdbcType="LONGVARCHAR" property="pooledTrans" />
+    <result column="MODIFIED_WORLD_STATE_LIST" jdbcType="LONGVARCHAR" property="modifiedWorldStateList" />
+    <result column="MODIFIED_CHANNEL_RECORD" jdbcType="LONGVARCHAR" property="modifiedChannelRecordList" />
+  </resultMap>
+  <resultMap extends="ResultMapWithBLOBs" id="ResultMapStateHistory" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.TransactionModelExpandStateHistory">
+    <result column="CONSENSUS_TIMESTAMP" jdbcType="TIMESTAMP" property="consensusTimeStamp"/>
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    ID,BLOCK_ID,VERSION, POOLED_TRANS_VERSION, ADD2_POOL_TIMESTAMP, TRANS_HASH_STR, SDK_TRANS_VERSION,
+    CLIENT_TIMESTAMP, CLIENT_TRANS_ID, CHANNEL_ID, SMART_CONTRACT_ID, SMART_CONTRACT_METHOD_NAME,
+    CLIENT_IDENTITY_KEY, EXECUTE_TIMESTAMP, EXECUTED_MS, BLOCK_HASH_STR, INDEX_IN_BLOCK, SUCCESSED,
+    ERROR_MSG,CREATE_TIMESTAMP
+  </sql>
+  <sql id="Blob_Column_List">
+    POOLED_TRANS, MODIFIED_WORLD_STATE_LIST, MODIFIED_CHANNEL_RECORD
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where ID = #{id,jdbcType=BIGINT} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByBlockHash"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where BLOCK_HASH_STR = #{blockHash,jdbcType=VARCHAR} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    ORDER BY INDEX_IN_BLOCK ASC
+  </select>
+
+  <select id="selectByBlockHashAndIndexRegion" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where BLOCK_HASH_STR = #{blockHash,jdbcType=VARCHAR} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    <if test="txIndexFrom !='' and txIndexFrom != null and txIndexTo !='' and txIndexTo != null and txIndexFrom &lt; txIndexTo">
+      and  INDEX_IN_BLOCK &gt;= #{txIndexFrom,jdbcType=INTEGER}  and INDEX_IN_BLOCK &lt;= #{txIndexTo,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="selectByClientTxId"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where CLIENT_TRANS_ID = #{clientTxId,jdbcType=VARCHAR}
+    and CLIENT_IDENTITY_KEY = #{clientIdentityKey,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByClientTransId"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from TRANSACTION
+    where CLIENT_TRANS_ID = #{clientTransId,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    limit 1;
+  </select>
+
+  <select id="selectByTxHash"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where TRANS_HASH_STR = #{txHashStr,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCacheByBlockHash" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from TRANSACTION_CACHE
+    where BLOCK_HASH_STR = #{blockHash,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByBlockHashAndIndex"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where BLOCK_HASH_STR = #{blockHash,jdbcType=VARCHAR}
+    and INDEX_IN_BLOCK = #{txIndex,jdbcType=INTEGER}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+  <!--根据交易客户端id查询交易-->
+  <select id="selectTransByClientId" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    AND CLIENT_TRANS_ID = #{clientId,jdbcType=VARCHAR}
+    AND CLIENT_IDENTITY_KEY = #{clientIdentitykey,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"></include>
+    ,
+    <include refid="Blob_Column_List"></include>
+    from `TRANSACTION`
+    WHERE CHANNEL_ID=#{channelId,jdbcType=VARCHAR} order by ADD2_POOL_TIMESTAMP
+  </select>
+  <select id="selectAllByKey" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"></include>
+    ,
+    <include refid="Blob_Column_List"></include>
+    from `TRANSACTION`
+    WHERE CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    <if test="key != null and key != ''">
+    AND MODIFIED_WORLD_STATE_LIST like CONCAT('%', #{key,jdbcType=VARCHAR}, '%')
+    </if>
+  </select>
+
+
+
+
+  <insert id="insert">
+    insert into `TRANSACTION` (VERSION, BLOCK_ID,POOLED_TRANS_VERSION,
+      ADD2_POOL_TIMESTAMP, TRANS_HASH_STR, SDK_TRANS_VERSION,
+      CLIENT_TIMESTAMP, CLIENT_TRANS_ID, CHANNEL_ID,
+      SMART_CONTRACT_ID, SMART_CONTRACT_METHOD_NAME,
+      CLIENT_IDENTITY_KEY, EXECUTE_TIMESTAMP, EXECUTED_MS,
+      BLOCK_HASH_STR, INDEX_IN_BLOCK, SUCCESSED,
+      ERROR_MSG, POOLED_TRANS, MODIFIED_WORLD_STATE_LIST,
+      MODIFIED_CHANNEL_RECORD,CREATE_TIMESTAMP)
+    values (#{record.version,jdbcType=VARCHAR},#{record.blockId,jdbcType=BIGINT}, #{record.pooledTransVersion,jdbcType=VARCHAR},
+      #{record.add2PoolTimestamp,jdbcType=TIMESTAMP}, #{record.transHashStr,jdbcType=VARCHAR}, #{record.sdkTransVersion,jdbcType=VARCHAR},
+      #{record.clientTimestamp,jdbcType=TIMESTAMP}, #{record.clientTransId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR},
+      #{record.smartContractId,jdbcType=VARCHAR}, #{record.smartContractMethodName,jdbcType=VARCHAR},
+      #{record.clientIdentityKey,jdbcType=VARCHAR}, #{record.executeTimestamp,jdbcType=TIMESTAMP}, #{record.executedMs,jdbcType=BIGINT},
+      #{record.blockHash,jdbcType=VARCHAR}, #{record.indexInBlock,jdbcType=INTEGER}, #{record.successed,jdbcType=TINYINT},
+      #{record.errorMsg,jdbcType=VARCHAR}, #{record.pooledTrans,jdbcType=LONGVARCHAR}, #{record.modifiedWorldStateList,jdbcType=LONGVARCHAR},
+      #{record.modifiedChannelRecordList,jdbcType=LONGVARCHAR},#{record.createTimestamp,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertCache">
+    insert into TRANSACTION_CACHE (VERSION, BLOCK_ID,POOLED_TRANS_VERSION,
+      ADD2_POOL_TIMESTAMP, TRANS_HASH_STR, SDK_TRANS_VERSION,
+      CLIENT_TIMESTAMP, CLIENT_TRANS_ID, CHANNEL_ID,
+      SMART_CONTRACT_ID, SMART_CONTRACT_METHOD_NAME,
+      CLIENT_IDENTITY_KEY, EXECUTE_TIMESTAMP, EXECUTED_MS,
+      BLOCK_HASH_STR, INDEX_IN_BLOCK, SUCCESSED,
+      ERROR_MSG, POOLED_TRANS, MODIFIED_WORLD_STATE_LIST,
+      MODIFIED_CHANNEL_RECORD,CREATE_TIMESTAMP)
+    values (#{record.version,jdbcType=VARCHAR},#{record.blockId,jdbcType=BIGINT}, #{record.pooledTransVersion,jdbcType=VARCHAR},
+      #{record.add2PoolTimestamp,jdbcType=TIMESTAMP}, #{record.transHashStr,jdbcType=VARCHAR}, #{record.sdkTransVersion,jdbcType=VARCHAR},
+      #{record.clientTimestamp,jdbcType=TIMESTAMP}, #{record.clientTransId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR},
+      #{record.smartContractId,jdbcType=VARCHAR}, #{record.smartContractMethodName,jdbcType=VARCHAR},
+      #{record.clientIdentityKey,jdbcType=VARCHAR}, #{record.executeTimestamp,jdbcType=TIMESTAMP}, #{record.executedMs,jdbcType=BIGINT},
+      #{record.blockHash,jdbcType=VARCHAR}, #{record.indexInBlock,jdbcType=INTEGER}, #{record.successed,jdbcType=TINYINT},
+      #{record.errorMsg,jdbcType=VARCHAR}, #{record.pooledTrans,jdbcType=LONGVARCHAR}, #{record.modifiedWorldStateList,jdbcType=LONGVARCHAR},
+      #{record.modifiedChannelRecordList,jdbcType=LONGVARCHAR},#{record.createTimestamp,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="batchInsert" >
+    insert into `TRANSACTION` (VERSION, BLOCK_ID, POOLED_TRANS_VERSION,
+    ADD2_POOL_TIMESTAMP, TRANS_HASH_STR, SDK_TRANS_VERSION,
+    CLIENT_TIMESTAMP, CLIENT_TRANS_ID, CHANNEL_ID,
+    SMART_CONTRACT_ID, SMART_CONTRACT_METHOD_NAME,
+    CLIENT_IDENTITY_KEY, EXECUTE_TIMESTAMP, EXECUTED_MS,
+    BLOCK_HASH_STR, INDEX_IN_BLOCK, SUCCESSED,
+    ERROR_MSG, POOLED_TRANS, MODIFIED_WORLD_STATE_LIST,
+    MODIFIED_CHANNEL_RECORD,CREATE_TIMESTAMP)
+    values
+    <foreach collection="list" item="record" index="index" separator=",">
+    (#{record.version,jdbcType=VARCHAR},#{record.blockId,jdbcType=BIGINT},#{record.pooledTransVersion,jdbcType=VARCHAR},
+    #{record.add2PoolTimestamp,jdbcType=TIMESTAMP}, #{record.transHashStr,jdbcType=VARCHAR}, #{record.sdkTransVersion,jdbcType=VARCHAR},
+    #{record.clientTimestamp,jdbcType=TIMESTAMP}, #{record.clientTransId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR},
+    #{record.smartContractId,jdbcType=VARCHAR}, #{record.smartContractMethodName,jdbcType=VARCHAR},
+    #{record.clientIdentityKey,jdbcType=VARCHAR}, #{record.executeTimestamp,jdbcType=TIMESTAMP}, #{record.executedMs,jdbcType=BIGINT},
+    #{record.blockHash,jdbcType=VARCHAR}, #{record.indexInBlock,jdbcType=INTEGER}, #{record.successed,jdbcType=TINYINT},
+    #{record.errorMsg,jdbcType=VARCHAR}, #{record.pooledTrans,jdbcType=LONGVARCHAR}, #{record.modifiedWorldStateList,jdbcType=LONGVARCHAR},
+    #{record.modifiedChannelRecordList,jdbcType=LONGVARCHAR},#{record.createTimestamp,jdbcType=TIMESTAMP})
+    </foreach> on duplicate key update
+    VERSION=VALUES(VERSION), POOLED_TRANS_VERSION=VALUES(POOLED_TRANS_VERSION),
+    ADD2_POOL_TIMESTAMP=VALUES(ADD2_POOL_TIMESTAMP), TRANS_HASH_STR=VALUES(TRANS_HASH_STR), SDK_TRANS_VERSION=VALUES(SDK_TRANS_VERSION),
+    CLIENT_TIMESTAMP=VALUES(CLIENT_TIMESTAMP), CLIENT_TRANS_ID=VALUES(CLIENT_TRANS_ID), CHANNEL_ID=VALUES(CHANNEL_ID),
+    SMART_CONTRACT_ID=VALUES(SMART_CONTRACT_ID), SMART_CONTRACT_METHOD_NAME=VALUES(SMART_CONTRACT_METHOD_NAME),
+    CLIENT_IDENTITY_KEY=VALUES(CLIENT_IDENTITY_KEY), EXECUTE_TIMESTAMP=VALUES(EXECUTE_TIMESTAMP), EXECUTED_MS=VALUES(EXECUTED_MS),
+    INDEX_IN_BLOCK=VALUES(INDEX_IN_BLOCK), SUCCESSED=VALUES(SUCCESSED),ERROR_MSG=VALUES(ERROR_MSG),
+    POOLED_TRANS=VALUES(POOLED_TRANS), MODIFIED_WORLD_STATE_LIST=VALUES(MODIFIED_WORLD_STATE_LIST),
+    MODIFIED_CHANNEL_RECORD=VALUES(MODIFIED_CHANNEL_RECORD),CREATE_TIMESTAMP=VALUES(CREATE_TIMESTAMP)
+  </insert>
+
+  <insert id="batchInsertCache" >
+    replace into TRANSACTION_CACHE (VERSION, BLOCK_ID,POOLED_TRANS_VERSION,
+    ADD2_POOL_TIMESTAMP, TRANS_HASH_STR, SDK_TRANS_VERSION,
+    CLIENT_TIMESTAMP, CLIENT_TRANS_ID, CHANNEL_ID,
+    SMART_CONTRACT_ID, SMART_CONTRACT_METHOD_NAME,
+    CLIENT_IDENTITY_KEY, EXECUTE_TIMESTAMP, EXECUTED_MS,
+    BLOCK_HASH_STR, INDEX_IN_BLOCK, SUCCESSED,
+    ERROR_MSG, POOLED_TRANS, MODIFIED_WORLD_STATE_LIST,
+    MODIFIED_CHANNEL_RECORD,CREATE_TIMESTAMP)
+    values
+    <foreach collection="list" item="record" index="index" separator=",">
+      (#{record.version,jdbcType=VARCHAR},#{record.blockId,jdbcType=BIGINT}, #{record.pooledTransVersion,jdbcType=VARCHAR},
+      #{record.add2PoolTimestamp,jdbcType=TIMESTAMP}, #{record.transHashStr,jdbcType=VARCHAR}, #{record.sdkTransVersion,jdbcType=VARCHAR},
+      #{record.clientTimestamp,jdbcType=TIMESTAMP}, #{record.clientTransId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR},
+      #{record.smartContractId,jdbcType=VARCHAR}, #{record.smartContractMethodName,jdbcType=VARCHAR},
+      #{record.clientIdentityKey,jdbcType=VARCHAR}, #{record.executeTimestamp,jdbcType=TIMESTAMP}, #{record.executedMs,jdbcType=BIGINT},
+      #{record.blockHash,jdbcType=VARCHAR}, #{record.indexInBlock,jdbcType=INTEGER}, #{record.successed,jdbcType=TINYINT},
+      #{record.errorMsg,jdbcType=VARCHAR}, #{record.pooledTrans,jdbcType=LONGVARCHAR}, #{record.modifiedWorldStateList,jdbcType=LONGVARCHAR},
+      #{record.modifiedChannelRecordList,jdbcType=LONGVARCHAR},#{record.createTimestamp,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+  <delete id="deleteCacheTransactionByBlockHash" >
+    delete from TRANSACTION_CACHE where BLOCK_HASH_STR=#{blockHash,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteCacheTransactionByChannelId" >
+    delete from TRANSACTION_CACHE where  CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteTransactionByChannelId" >
+    delete from `TRANSACTION` where  CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteCacheTransactionByBlockHeight">
+     delete from TRANSACTION_CACHE where
+     CHANNEL_ID = #{channelId, jdbcType=VARCHAR} AND
+     BLOCK_HASH_STR = #{blockHash, jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteTransactionByBlockHeight">
+     delete from `TRANSACTION` where
+     CHANNEL_ID = #{channelId, jdbcType=VARCHAR} AND
+     BLOCK_HASH_STR = #{blockHash, jdbcType=VARCHAR}
+  </delete>
+
+  <select id="countTxByHash" resultType="java.lang.Integer">
+    select count(*)
+    from `TRANSACTION`
+    where BLOCK_HASH_STR = #{blockHash,jdbcType=VARCHAR}
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+  <select id="countTx" resultType="java.lang.Integer">
+    select count(*)
+    from `TRANSACTION`
+    where CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="selectByCreateTimestamp" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `TRANSACTION`
+    where CHANNEL_ID=#{channelId,jdbcType=VARCHAR} and create_timestamp <![CDATA[ >= ]]> timestamp(#{startTime})
+    and create_timestamp <![CDATA[ <= ]]> timestamp(#{endTime});
+
+  </select>
+
+  <select id="selectTransListByBlockIdRegion" resultMap="ResultMapStateHistory">
+    select
+    a.ID,a.BLOCK_ID,a.VERSION,a.POOLED_TRANS_VERSION,a.ADD2_POOL_TIMESTAMP,
+    a.TRANS_HASH_STR,a.SDK_TRANS_VERSION,a.CLIENT_TIMESTAMP,a.CLIENT_TRANS_ID,
+    a.CHANNEL_ID,a.SMART_CONTRACT_ID,a.SMART_CONTRACT_METHOD_NAME,a.CLIENT_IDENTITY_KEY,
+    a.EXECUTE_TIMESTAMP, a.EXECUTED_MS, a.BLOCK_HASH_STR, a.INDEX_IN_BLOCK, a.SUCCESSED,
+    a.ERROR_MSG,a.CREATE_TIMESTAMP,a.POOLED_TRANS,a.MODIFIED_WORLD_STATE_LIST,a.MODIFIED_CHANNEL_RECORD,
+    b.CONSENSUS_TIMESTAMP
+    from `transaction` as a,`block` as b
+    WHERE a.BLOCK_HASH_STR =( SELECT block_hash from `block` WHERE CHANNEL_ID = #{channelId} and BLOCK_ID =#{blockId} )
+    and a.CHANNEL_ID =  #{channelId}
+    and a.BLOCK_HASH_STR = b.block_hash
+  </select>
+
+</mapper>

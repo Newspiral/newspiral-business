@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置需要导出的JVM服务 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://sofastack.io/schema/sofaboot"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd"
+       default-autowire="byName">
+    <!--  交易管理对模块外实现的接口   -->
+    <bean id="tranasctionMgr" class="com.jinninghui.newspiral.transaction.mgr.impl.TransactionMgrImpl" init-method="init">
+    </bean>
+
+    <sofa:service ref="tranasctionMgr" interface="com.jinninghui.newspiral.transaction.mgr.TransactionMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+</beans>

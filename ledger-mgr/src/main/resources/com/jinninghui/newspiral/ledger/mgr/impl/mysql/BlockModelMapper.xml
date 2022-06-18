@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.BlockModelMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.BlockModel">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="BLOCK_ID" jdbcType="BIGINT" property="blockId" />
+    <result column="VERSION" jdbcType="VARCHAR" property="version" />
+    <result column="block_hash" jdbcType="VARCHAR" property="hash" />
+    <result column="PREV_BLOCK_HASH" jdbcType="VARCHAR" property="prevBlockHash" />
+    <result column="PREV_BLOCK_HEIGHT" jdbcType="BIGINT" property="prevBlockHeight" />
+    <result column="BLOCK_BUILDER_ID" jdbcType="VARCHAR" property="blockBuilderId" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="PACK_TIMESTAMP" jdbcType="TIMESTAMP" property="packTimestamp" />
+    <result column="BLOCK_CONSENSUS" jdbcType="VARCHAR" property="blockConsensus" />
+    <result column="PERSISTENCE_TIMESTAMP" jdbcType="TIMESTAMP" property="persistenceTimeStamp"/>
+    <result column="CONSENSUS_TIMESTAMP" jdbcType="TIMESTAMP" property="consensusTimeStamp"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.BlockModel">
+    <result column="BLOCK_WITNESS" jdbcType="LONGVARCHAR" property="blockWitness" />
+  </resultMap>
+  <sql id="Base_Column_List">
+     `BLOCK_ID`, `VERSION`, `block_hash`, `PREV_BLOCK_HASH`, `PREV_BLOCK_HEIGHT`, `BLOCK_BUILDER_ID`,
+    `CHANNEL_ID`, `PACK_TIMESTAMP`, `BLOCK_CONSENSUS`,`PERSISTENCE_TIMESTAMP`,`CONSENSUS_TIMESTAMP`
+  </sql>
+  <sql id="Blob_Column_List">
+    `BLOCK_WITNESS`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `block`
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectBlockByChannelIdAndHeightRegion" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `block`
+    where  CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    AND BLOCK_ID &gt;= #{fromHeight,jdbcType=BIGINT} and BLOCK_ID &lt;= #{toHeight,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteCommittedBlock">
+    delete from `block` where BLOCK_ID = #{height, jdbcType=BIGINT} AND
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteCachedBlock">
+    delete from BLOCK_CACHE where BLOCK_ID = #{height, jdbcType=BIGINT} AND
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteCachedBlockBehind">
+    delete from BLOCK_CACHE where <![CDATA[BLOCK_ID >= #{height, jdbcType=BIGINT}]]> AND
+      CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteCommittedBlockByChannelId">
+    delete from `block` where
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteCachedBlockByChannelId">
+    delete from BLOCK_CACHE where
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteCachedBlockByBlockHeight">
+    delete from BLOCK_CACHE where
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR} AND
+    BLOCK_ID = #{height, jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteCommittedBlockByBlockHeight">
+    delete from `BLOCK` where
+    CHANNEL_ID = #{channelId, jdbcType=VARCHAR} AND
+    BLOCK_ID = #{height, jdbcType=BIGINT}
+  </delete>
+
+
+
+  <insert id="insertCachedBlock">
+    REPLACE into BLOCK_CACHE (BLOCK_ID, VERSION,
+      block_hash, PREV_BLOCK_HASH, PREV_BLOCK_HEIGHT,
+      BLOCK_BUILDER_ID, CHANNEL_ID, PACK_TIMESTAMP,
+      BLOCK_CONSENSUS, BLOCK_WITNESS , CONSENSUS_TIMESTAMP, PERSISTENCE_TIMESTAMP)
+    values (#{record.blockId,jdbcType=BIGINT}, #{record.version,jdbcType=VARCHAR},
+      #{record.hash,jdbcType=VARCHAR}, #{record.prevBlockHash,jdbcType=VARCHAR}, #{record.prevBlockHeight,jdbcType=BIGINT},
+      #{record.blockBuilderId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR}, #{record.packTimestamp,jdbcType=TIMESTAMP},
+      #{record.blockConsensus,jdbcType=VARCHAR}, #{record.blockWitness,jdbcType=LONGVARCHAR},#{record.consensusTimeStamp,jdbcType=TIMESTAMP}
+      ,#{record.persistenceTimeStamp,jdbcType=TIMESTAMP}) /*on duplicate KEY update
+      BLOCK_ID=VALUES(BLOCK_ID),PREV_BLOCK_HASH=VALUES(PREV_BLOCK_HASH),
+      PREV_BLOCK_HEIGHT=VALUES(PREV_BLOCK_HEIGHT),BLOCK_BUILDER_ID=VALUES(BLOCK_BUILDER_ID),
+      CHANNEL_ID=VALUES(CHANNEL_ID),PACK_TIMESTAMP=VALUES(PACK_TIMESTAMP),BLOCK_CONSENSUS=VALUES(BLOCK_CONSENSUS),
+      BLOCK_WITNESS=VALUES(BLOCK_WITNESS), CONSENSUS_TIMESTAMP=VALUES(CONSENSUS_TIMESTAMP),PERSISTENCE_TIMESTAMP=VALUES(PERSISTENCE_TIMESTAMP)*/
+</insert>
+
+  <insert id="insertCommittedBlock">
+    /*sharding不支持在on duplicate key update 中更新分库键*/
+    insert into `block` (BLOCK_ID, VERSION,
+      block_hash, PREV_BLOCK_HASH, PREV_BLOCK_HEIGHT,
+      BLOCK_BUILDER_ID, CHANNEL_ID, PACK_TIMESTAMP,
+      BLOCK_CONSENSUS, BLOCK_WITNESS , CONSENSUS_TIMESTAMP, PERSISTENCE_TIMESTAMP)
+    values (#{record.blockId,jdbcType=BIGINT}, #{record.version,jdbcType=VARCHAR},
+      #{record.hash,jdbcType=VARCHAR}, #{record.prevBlockHash,jdbcType=VARCHAR}, #{record.prevBlockHeight,jdbcType=BIGINT},
+      #{record.blockBuilderId,jdbcType=VARCHAR}, #{record.channelId,jdbcType=VARCHAR}, #{record.packTimestamp,jdbcType=TIMESTAMP},
+      #{record.blockConsensus,jdbcType=VARCHAR}, #{record.blockWitness,jdbcType=LONGVARCHAR},#{record.consensusTimeStamp,jdbcType=TIMESTAMP}
+      ,#{record.persistenceTimeStamp,jdbcType=TIMESTAMP}) on duplicate KEY update
+    PREV_BLOCK_HASH=VALUES(PREV_BLOCK_HASH),
+    PREV_BLOCK_HEIGHT=VALUES(PREV_BLOCK_HEIGHT),BLOCK_BUILDER_ID=VALUES(BLOCK_BUILDER_ID),
+    CHANNEL_ID=VALUES(CHANNEL_ID),PACK_TIMESTAMP=VALUES(PACK_TIMESTAMP),BLOCK_CONSENSUS=VALUES(BLOCK_CONSENSUS),
+    BLOCK_WITNESS=VALUES(BLOCK_WITNESS), CONSENSUS_TIMESTAMP=VALUES(CONSENSUS_TIMESTAMP),PERSISTENCE_TIMESTAMP=VALUES(PERSISTENCE_TIMESTAMP)
+  </insert>
+  <select id="selectBlockByChannelId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM `block`
+    WHERE
+    CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    order by BLOCK_ID desc LIMIT ${num}
+  </select>
+  <select id="selectByHeight" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `block`
+    where BLOCK_ID = #{height,jdbcType=BIGINT} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectBlockCacheByHeight" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BLOCK_CACHE
+    where BLOCK_ID = #{height,jdbcType=BIGINT} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByHash" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `block`
+    where block_hash = #{hash,jdbcType=VARCHAR} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectHeightByHash" resultType="java.lang.Long">
+    select
+    BLOCK_ID
+    from `block`
+    where block_hash = #{hash,jdbcType=VARCHAR} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectMaxHeightBlock" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from `block`
+    where CHANNEL_ID=#{channelId,jdbcType=VARCHAR} order by block_id desc limit 1
+  </select>
+
+  <select id="selectCacheByHash" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BLOCK_CACHE
+    where block_hash = #{hash,jdbcType=VARCHAR} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectBlockCacheListByHeight" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BLOCK_CACHE
+    where  <![CDATA[  BLOCK_ID <= #{height,jdbcType=BIGINT} ]]> AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="queryMaxBlockHightByChannelId" resultType="java.lang.Long">
+    SELECT MAX(BLOCK_ID) from `block` where CHANNEL_ID=#{channelId,jdbcType=VARCHAR};
+  </select>
+
+  <select id="selectLatestBlockList" resultMap="ResultMapWithBLOBs">
+     SELECT
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+      from `block` where CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+     ORDER BY BLOCK_ID DESC
+     limit 0,#{count,jdbcType=BIGINT}
+  </select>
+
+  <select id="queryMaxBlockId" resultType="java.lang.Long">
+    select max(BLOCK_ID)
+    from `block`
+    group by `CHANNEL_ID`;
+  </select>
+
+  <select id="queryChannelMaxBlockId" resultType="java.util.HashMap">
+    select max(BLOCK_ID) as num,`CHANNEL_ID`
+    from `block`
+    group by `CHANNEL_ID`;
+  </select>
+
+  <delete id="deleteBlockCacheListByHeight" >
+    delete from BLOCK_CACHE where  <![CDATA[  BLOCK_ID = #{height,jdbcType=BIGINT} ]]>
+    AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="selectIfExistAfterFromBLock" resultType="java.lang.Long">
+    SELECT count(block_hash) from `block`
+     WHERE CHANNEL_ID = #{channelId}
+     and (BLOCK_ID = (#{fromBlockId})
+     or BLOCK_ID = (#{fromBlockId}+1)
+     or BLOCK_ID = (#{fromBlockId}+2)
+     or BLOCK_ID = (#{fromBlockId}+3));
+  </select>
+
+  <select id="selectLatestBlockId" resultType="java.lang.Long">
+     SELECT max(BLOCK_ID) from `block`
+     where CHANNEL_ID=#{channelId};
+  </select>
+
+</mapper>

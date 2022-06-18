@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.StateAttachModelMapper">
+
+    <insert id="batchInsert">
+        insert into STATE_ATTACH (CHANNEL_ID,STATE_KEY, LATEST_UPDATE_TIME, LATEST_BLOCK_HASH)
+        values
+        <foreach collection="list" item="record" index="index" separator=",">
+        (#{record.channelId},#{record.key}, #{record.latestUpdateTime},#{record.latestBlockHash})
+        </foreach>;
+    </insert>
+
+    <update id="batchUpdateByPrimaryKey">
+        <foreach collection="list" item="record" index="index" separator=";">
+            update STATE_ATTACH
+            set LATEST_BLOCK_HASH = #{record.latestBlockHash},LATEST_UPDATE_TIME=#{record.latestUpdateTime}
+            where STATE_KEY = #{record.key} AND CHANNEL_ID = #{record.channelId}
+        </foreach>
+    </update>
+
+    <delete id="batchDeleteByPrimaryKey">
+        <foreach collection="list" item="record" index="index" separator=";">
+            delete from STATE_ATTACH
+            where STATE_KEY = #{record.key,jdbcType=LONGVARCHAR} AND CHANNEL_ID = #{record.channelId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+
+</mapper>

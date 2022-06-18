@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>newspiral-business</artifactId>
+        <groupId>com.jinninghui.newspiral</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jinninghui.newspiral</groupId>
+    <artifactId>security-service</artifactId>
+    <packaging>jar</packaging>
+    <version>${ns.package.version}</version>
+    <description>安全和密码服务，提供加解密、签名、验签等服务</description>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.0.0-RC4</version>
+        </dependency>
+<!--        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo-shaded</artifactId>
+            <version>4.0.0</version>
+        </dependency>-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.64</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.64</version>
+        </dependency>
+<!--        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.64</version>
+        </dependency>-->
+<!--        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>ledger-mgr</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>common-entity</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>security-service-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>isle-sofa-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>runtime-sofa-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>rpc-sofa-boot-starter</artifactId>
+           <!-- <artifactId>sofa-rpc-all</artifactId>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>5.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <repositories>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dsp-snapshots</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

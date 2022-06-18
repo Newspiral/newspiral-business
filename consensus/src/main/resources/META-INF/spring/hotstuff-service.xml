@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置需要导出的JVM服务 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://sofastack.io/schema/sofaboot" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+       default-autowire="byName">
+
+    <bean id="leaderTxExecutor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.txexecutor.TxExecutorConsensusCache" init-method="init">
+    </bean>
+
+    <bean id="systemSmartContract" class="com.jinninghui.newspiral.consensus.impl.hotstuff.txexecutor.SystemSmartContract">
+    </bean>
+
+    <!--  每个Channel将拥有一个独占的此Bean，不要直接注入   -->
+    <bean id="newSpiralHotStuffProcessor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.NewSpiralHotStuffProcessor"
+          scope="prototype">
+    </bean>
+
+    <!--  每个Channel将拥有一个独占的此Bean，不要直接注入   -->
+    <bean id="newSpiralSyncHistoryBlockProcessor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.NewSpiralSyncHistoryBlockProcessor"
+          scope="prototype">
+    </bean>
+
+    <bean id="transactionExecutionProcessor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.TransactionExecutionProcessor"
+          scope="prototype">
+    </bean>
+
+    <bean id="persistBlockProcessor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.PersistBlockProcessor" scope="singleton">
+
+    </bean>
+
+    <bean id="consensusMsgProcessor" class="com.jinninghui.newspiral.consensus.impl.hotstuff.ConsensusMsgProcessorImpl"
+    init-method="init">
+    </bean>
+
+    <sofa:service ref="consensusMsgProcessor" interface="com.jinninghui.newspiral.consensus.hotstuff.ConsensusMsgProcessor">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <bean id="dataVerifier" class="com.jinninghui.newspiral.consensus.impl.hotstuff.DataVerifierImpl"></bean>
+
+    <sofa:service ref="dataVerifier" interface="com.jinninghui.newspiral.consensus.hotstuff.DataVerifier">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+</beans>

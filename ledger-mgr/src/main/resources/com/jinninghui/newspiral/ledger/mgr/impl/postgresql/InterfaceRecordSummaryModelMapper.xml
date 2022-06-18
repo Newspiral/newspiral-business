@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.InterfaceRecordSummaryMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.InterfaceRecordSummaryModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="RECORD_HASH" jdbcType="VARCHAR" property="recordHash"/>
+        <result column="METHOD_NAME" jdbcType="VARCHAR" property="methodName"/>
+        <result column="PROTOCOL_NAME" jdbcType="VARCHAR" property="protocolName"/>
+        <result column="CHANNEL_ID" jdbcType="CHAR" property="channelId"/>
+        <result column="SUCCESSED" jdbcType="INTEGER" property="successed"/>
+        <result column="ERROR_MSG" jdbcType="VARCHAR" property="errorMsg"/>
+        <result column="SC_ALISA" jdbcType="VARCHAR" property="scAlisa"/>
+        <result column="SC_METHOD_NAME" jdbcType="VARCHAR" property="scMethodName"/>
+        <result column="SC_VERSION" jdbcType="VARCHAR" property="scVersion"/>
+        <result column="TOTAL_CALLS" jdbcType="BIGINT" property="totalCalls"/>
+        <result column="TOTAL_CALL_TIME" jdbcType="BIGINT" property="totalCallTime"/>
+    </resultMap>
+
+    <insert id="duplicateKeyInsertAndUpdate">
+        insert into interface_record_summary(RECORD_HASH,METHOD_NAME,PROTOCOL_NAME,CHANNEL_ID,
+        SUCCESSED,ERROR_MSG,SC_ALISA,SC_METHOD_NAME,SC_VERSION,TOTAL_CALLS,TOTAL_CALL_TIME)
+        values
+        <foreach collection="list" item="record" index="index" separator=",">
+            (#{record.recordHash,jdbcType=VARCHAR},#{record.methodName,jdbcType=VARCHAR},
+            #{record.protocolName,jdbcType=VARCHAR},#{record.channelId,jdbcType=CHAR},
+            #{record.successed,jdbcType=INTEGER},#{record.errorMsg,jdbcType=VARCHAR},
+            #{record.scAlisa,jdbcType=VARCHAR},#{record.scMethodName,jdbcType=VARCHAR},
+            #{record.scVersion,jdbcType=VARCHAR},#{record.totalCalls,jdbcType=BIGINT},
+            #{record.totalCallTime,jdbcType=BIGINT})
+        </foreach>
+        on conflict (record_hash) do UPDATE set total_Calls=EXCLUDED.total_Calls ,total_call_time = EXCLUDED.total_call_time;
+        /*on DUPLICATE KEY UPDATE total_Calls=values(TOTAL_CALLS) ,total_call_time = values(TOTAL_CALL_TIME);*/
+
+    </insert>
+
+    <select id="selectInterfaceRecordSummary" resultMap="BaseResultMap">
+        select * from interface_record_summary
+    </select>
+
+
+</mapper>

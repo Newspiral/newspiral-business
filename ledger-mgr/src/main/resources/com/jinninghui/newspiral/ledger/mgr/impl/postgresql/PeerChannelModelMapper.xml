@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.PeerChannelModelMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModel">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="PEER_ID" jdbcType="VARCHAR" property="peerId" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="JOIN_TIMESTAMP" jdbcType="TIMESTAMP" property="joinTimestamp" />
+    <result column="EXTENDED_DATA" jdbcType="VARCHAR" property="extendedData" />
+    <result column="USER_PRIVATE_KEY" jdbcType="VARCHAR" property="userPrivateKey" />
+    <result column="IN_BLOCK_HEIGHT" jdbcType="BIGINT" property="inBlockHeight"/>
+    <result column="OUT_BLOCK_HEIGHT" jdbcType="BIGINT" property="outBlockHeight"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModelWithBLOBs">
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PEER_ID, CHANNEL_ID, JOIN_TIMESTAMP, EXTENDED_DATA, USER_PRIVATE_KEY, IN_BLOCK_HEIGHT, OUT_BLOCK_HEIGHT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from PEER_CHANNEL
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from PEER_CHANNEL
+  </select>
+  <select id="selectAllByChannelId" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from PEER_CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from PEER_CHANNEL
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByChannelIdAndPeerId">
+    delete from PEER_CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+    and PEER_ID = #{peerId,jdbcType=VARCHAR}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModelWithBLOBs">
+    replace into PEER_CHANNEL (ID, PEER_ID, CHANNEL_ID,
+      JOIN_TIMESTAMP,EXTENDED_DATA,USER_PRIVATE_KEY,IN_BLOCK_HEIGHT, OUT_BLOCK_HEIGHT
+      )
+    values (#{id,jdbcType=INTEGER}, #{peerId,jdbcType=VARCHAR}, #{channelId,jdbcType=VARCHAR},
+      #{joinTimestamp,jdbcType=TIMESTAMP},#{extendedData,jdbcType=VARCHAR},#{userPrivateKey,jdbcType=VARCHAR},
+      #{inBlockHeight,jdbcType=BIGINT},#{outBlockHeight,jdbcType=BIGINT}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModelWithBLOBs">
+    update PEER_CHANNEL
+    <set>
+      <if test="peerId != null">
+        PEER_ID = #{peerId,jdbcType=VARCHAR},
+      </if>
+      <if test="channelId != null">
+        CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+      </if>
+      <if test="joinTimestamp != null">
+        JOIN_TIMESTAMP = #{joinTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extendedData != null">
+      EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+      </if>
+      <if test="userPrivateKey != null">
+        USER_PRIVATE_KEY = #{userPrivateKey,jdbcType=VARCHAR},
+      </if>
+      <if test="inBlockHeight != null">
+        IN_BLOCK_HEIGHT = #{inBlockHeight,jdbcType=BIGINT},
+      </if>
+      <if test="outBlockHeight != null">
+        OUT_BLOCK_HEIGHT = #{outBlockHeight,jdbcType=BIGINT}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPeerIdAndChannel" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModelWithBLOBs">
+    update PEER_CHANNEL
+    <set>
+      <if test="joinTimestamp != null">
+        JOIN_TIMESTAMP = #{joinTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extendedData != null">
+        EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+      </if>
+      <if test="userPrivateKey != null">
+        USER_PRIVATE_KEY = #{userPrivateKey,jdbcType=VARCHAR},
+      </if>
+      <if test="inBlockHeight != null">
+        IN_BLOCK_HEIGHT = #{inBlockHeight,jdbcType=BIGINT},
+      </if>
+      <if test="outBlockHeight != null">
+        OUT_BLOCK_HEIGHT = #{outBlockHeight,jdbcType=BIGINT}
+      </if>
+    </set>
+    where PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModelWithBLOBs">
+    update PEER_CHANNEL
+    set PEER_ID = #{peerId,jdbcType=VARCHAR},
+      CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+      JOIN_TIMESTAMP = #{joinTimestamp,jdbcType=TIMESTAMP},
+      EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+       USER_PRIVATE_KEY = #{userPrivateKey,jdbcType=VARCHAR},
+      IN_BLOCK_HEIGHT = #{inBlockHeight,jdbcType=BIGINT},
+      OUT_BLOCK_HEIGHT = #{outBlockHeight,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModel">
+    update PEER_CHANNEL
+    set PEER_ID = #{peerId,jdbcType=VARCHAR},
+      CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+      JOIN_TIMESTAMP = #{joinTimestamp,jdbcType=TIMESTAMP},
+      EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+      USER_PRIVATE_KEY = #{userPrivateKey,jdbcType=VARCHAR},
+      IN_BLOCK_HEIGHT = #{inBlockHeight,jdbcType=BIGINT},
+      OUT_BLOCK_HEIGHT = #{outBlockHeight,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateUserPrivateKetByConditionKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerChannelModel">
+    update PEER_CHANNEL
+    set
+    USER_PRIVATE_KEY = #{userPrivateKey,jdbcType=VARCHAR}
+    where PEER_ID = #{peerId,jdbcType=VARCHAR} AND
+    CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="queryLatestChannelChangeHeight" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT MAX(PEER_CHANNEL.IN_BLOCK_HEIGHT) as IN_BLOCK_HEIGHT, MAX(PEER_CHANNEL.OUT_BLOCK_HEIGHT) AS OUT_BLOCK_HEIGHT FROM PEER_CHANNEL
+    WHERE CHANNEL_ID = #{channelId,jdbcType=VARCHAR};
+  </select>
+  <select id="selectByPeerIdAndChannel" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from PEER_CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+    and PEER_ID = #{peerId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByChannelId">
+    delete from PEER_CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="selectCountByChannelId" parameterType="java.lang.String" resultType="int" >
+    select count(*) from PEER_CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR} and PEER_ID != #{peerId,jdbcType=VARCHAR}
+  </select>
+</mapper>

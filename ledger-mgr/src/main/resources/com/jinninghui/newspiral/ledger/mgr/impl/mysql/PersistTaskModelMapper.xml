@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.PersistTaskModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.PersistTaskModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TASK_ID" jdbcType="VARCHAR" property="taskId"/>
+        <result column="CREATE_TIME" jdbcType="BIGINT" property="createTime"/>
+        <result column="EXECUTE_END_TIME" jdbcType="BIGINT" property="executeEndTime"/>
+        <result column="PARAMAS_STR" jdbcType="VARCHAR" property="paramsStr"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    TASK_ID, CREATE_TIME, EXECUTE_END_TIME,PARAMAS_STR,TYPE,STATUS
+  </sql>
+
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PersistTaskModel">
+    insert into PERSIST_TASK (TASK_ID, CREATE_TIME,
+      EXECUTE_END_TIME, PARAMAS_STR,TYPE,STATUS
+      )
+    values (#{taskId,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT},#{executeEndTime,jdbcType=BIGINT},
+      #{paramsStr,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByPrimaryKey"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PersistTaskModel">
+        update PERSIST_TASK
+        <set>
+            STATUS = #{status,jdbcType=VARCHAR},
+        </set>
+        where TASK_ID = #{taskId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectAllByStatus"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from PERSIST_TASK WHERE TYPE='LOCAL_PEER_ADD_TO_CHANNEL_RESULT_QUERY' AND STATUS !='SUCCESS' AND STATUS !='FAIL' AND STATUS != 'OVERTIME'
+    </select>
+
+</mapper>

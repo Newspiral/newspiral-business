@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.ChannelModelMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CHANNEL_ID" jdbcType="CHAR" property="channelId"/>
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="BLOCK_MAX_SIZE" jdbcType="BIGINT" property="blockMaxSize" />
+    <result column="BLOCK_MAX_INTERVAL" jdbcType="BIGINT" property="blockMaxInterval" />
+    <result column="MAX_PEER_COUNT" jdbcType="INTEGER" property="maxPeerCount" />
+    <result column="PEER_ADD_STRATEGY" jdbcType="VARCHAR" property="peerAddStrategy" />
+    <result column="MODIFY_STRATEGY" jdbcType="VARCHAR" property="modifyStrategy" />
+    <result column="SC_DEPOLY_STRATEGY" jdbcType="VARCHAR" property="scDepolyStrategy" />
+    <result column="CONSENSUS_ALGORITHM" jdbcType="VARCHAR" property="consensusAlgorithm" />
+    <result column="TX_POOL_SIZE" jdbcType="BIGINT" property="txPoolSize" />
+    <result column="ALLOW_TIME_ERROR_SECONDS" jdbcType="BIGINT" property="allowTimeErrorSeconds" />
+    <result column="SECURITY_SERVICE_KEY" jdbcType="VARCHAR" property="securityServiceKey" />
+    <result column="EXTENDS_PARAMS" jdbcType="VARCHAR" property="extendsParams" />
+    <result column="MAX_TRANSACTION_COUNT" jdbcType="BIGINT" property="maxTransactionCount" />
+    <result column="AVAILABLE" jdbcType="INTEGER" property="available"/>
+    <result column="CREATE_TIMESTAMP" jdbcType="TIMESTAMP" property="createTimestamp" />
+    <result column="ORGANIZATION_ID" jdbcType="VARCHAR" property="organizationId" />
+    <result column="MEMBER_ADD_STRATEGY" jdbcType="VARCHAR" property="memberAddStrategy" />
+    <result column="MEMBER_MODIFY_STRATEGY" jdbcType="VARCHAR" property="memberModifyStrategy" />
+    <result column="MEMBER_DEL_STRATEGY" jdbcType="VARCHAR" property="memberDelStrategy" />
+    <result column="ROLE_ADD_STRATEGY" jdbcType="VARCHAR" property="roleAddStrategy" />
+    <result column="ROLE_MODIFY_STRATEGY" jdbcType="VARCHAR" property="roleModifyStrategy" />
+    <result column="ROLE_DEL_STRATEGY" jdbcType="VARCHAR" property="roleDelStrategy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CHANNEL_ID, NAME, BLOCK_MAX_SIZE, BLOCK_MAX_INTERVAL, MAX_PEER_COUNT, PEER_ADD_STRATEGY,
+    MODIFY_STRATEGY, SC_DEPOLY_STRATEGY, CONSENSUS_ALGORITHM, TX_POOL_SIZE, ALLOW_TIME_ERROR_SECONDS,
+    SECURITY_SERVICE_KEY, EXTENDS_PARAMS,MAX_TRANSACTION_COUNT, AVAILABLE,CREATE_TIMESTAMP,
+    ORGANIZATION_ID,MEMBER_ADD_STRATEGY,MEMBER_MODIFY_STRATEGY,MEMBER_DEL_STRATEGY,ROLE_ADD_STRATEGY,ROLE_MODIFY_STRATEGY,ROLE_DEL_STRATEGY
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=CHAR}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CHANNEL
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from CHANNEL
+    where CHANNEL_ID = #{channelId,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    insert into CHANNEL (CHANNEL_ID, NAME, BLOCK_MAX_SIZE,
+      BLOCK_MAX_INTERVAL, MAX_PEER_COUNT, PEER_ADD_STRATEGY,
+      MODIFY_STRATEGY, SC_DEPOLY_STRATEGY, CONSENSUS_ALGORITHM,
+      TX_POOL_SIZE, ALLOW_TIME_ERROR_SECONDS, SECURITY_SERVICE_KEY,
+      EXTENDS_PARAMS,MAX_TRANSACTION_COUNT,CREATE_TIMESTAMP,ORGANIZATION_ID,
+      MEMBER_ADD_STRATEGY,MEMBER_MODIFY_STRATEGY,MEMBER_DEL_STRATEGY,ROLE_ADD_STRATEGY,ROLE_MODIFY_STRATEGY,ROLE_DEL_STRATEGY)
+    values (#{channelId,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{blockMaxSize,jdbcType=BIGINT},
+      #{blockMaxInterval,jdbcType=BIGINT}, #{maxPeerCount,jdbcType=INTEGER}, #{peerAddStrategy,jdbcType=VARCHAR},
+      #{modifyStrategy,jdbcType=VARCHAR}, #{scDepolyStrategy,jdbcType=VARCHAR}, #{consensusAlgorithm,jdbcType=VARCHAR},
+      #{txPoolSize,jdbcType=BIGINT}, #{allowTimeErrorSeconds,jdbcType=BIGINT}, #{securityServiceKey,jdbcType=VARCHAR},
+      #{extendsParams,jdbcType=VARCHAR}, #{maxTransactionCount,jdbcType=BIGINT},
+      #{createTimestamp,jdbcType=TIMESTAMP}, #{organizationId,jdbcType=VARCHAR},
+      #{memberAddStrategy,jdbcType=VARCHAR},#{memberModifyStrategy,jdbcType=VARCHAR}, #{memberDelStrategy,jdbcType=VARCHAR},
+       #{roleAddStrategy,jdbcType=VARCHAR}, #{roleModifyStrategy,jdbcType=VARCHAR}, #{roleDelStrategy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    insert into CHANNEL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="channelId != null">
+        CHANNEL_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="blockMaxSize != null">
+        BLOCK_MAX_SIZE,
+      </if>
+      <if test="blockMaxInterval != null">
+        BLOCK_MAX_INTERVAL,
+      </if>
+      <if test="maxPeerCount != null">
+        MAX_PEER_COUNT,
+      </if>
+      <if test="peerAddStrategy != null">
+        PEER_ADD_STRATEGY,
+      </if>
+      <if test="modifyStrategy != null">
+        MODIFY_STRATEGY,
+      </if>
+      <if test="scDepolyStrategy != null">
+        SC_DEPOLY_STRATEGY,
+      </if>
+      <if test="consensusAlgorithm != null">
+        CONSENSUS_ALGORITHM,
+      </if>
+      <if test="txPoolSize != null">
+        TX_POOL_SIZE,
+      </if>
+      <if test="allowTimeErrorSeconds != null">
+        ALLOW_TIME_ERROR_SECONDS,
+      </if>
+      <if test="securityServiceKey != null">
+        SECURITY_SERVICE_KEY,
+      </if>
+      <if test="extendsParams != null">
+        EXTENDS_PARAMS,
+      </if>
+      <if test="maxTransactionCount != null">
+        MAX_TRANSACTION_COUNT,
+      </if>
+      <if test="memberAddStrategy != null">
+        MEMBER_ADD_STRATEGY,
+      </if>
+      <if test="memberModifyStrategy != null and memberModifyStrategy != 'MANAGER_AGREE'">
+        MEMBER_MODIFY_STRATEGY,
+      </if>
+      <if test="memberDelStrategy != null">
+        MEMBER_DEL_STRATEGY,
+      </if>
+      <if test="roleAddStrategy != null and roleAddStrategy != 'MANAGER_AGREE'">
+        ROLE_ADD_STRATEGY,
+      </if>
+      <if test="roleDelStrategy != null and roleDelStrategy != 'MANAGER_AGREE'">
+        ROLE_DEL_STRATEGY,
+      </if>
+      <if test="roleModifyStrategy != null and roleModifyStrategy != 'MANAGER_AGREE'">
+        ROLE_MODIFY_STRATEGY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="channelId != null">
+        #{channelId,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="blockMaxSize != null">
+        #{blockMaxSize,jdbcType=BIGINT},
+      </if>
+      <if test="blockMaxInterval != null">
+        #{blockMaxInterval,jdbcType=BIGINT},
+      </if>
+      <if test="maxPeerCount != null">
+        #{maxPeerCount,jdbcType=INTEGER},
+      </if>
+      <if test="peerAddStrategy != null">
+        #{peerAddStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyStrategy != null">
+        #{modifyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="scDepolyStrategy != null">
+        #{scDepolyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="consensusAlgorithm != null">
+        #{consensusAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="txPoolSize != null">
+        #{txPoolSize,jdbcType=BIGINT},
+      </if>
+      <if test="allowTimeErrorSeconds != null">
+        #{allowTimeErrorSeconds,jdbcType=BIGINT},
+      </if>
+      <if test="securityServiceKey != null">
+        #{securityServiceKey,jdbcType=VARCHAR},
+      </if>
+      <if test="extendsParams != null">
+        #{extendsParams,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTransactionCount != null">
+        #{maxTransactionCount,jdbcType=BIGINT},
+      </if>
+      <if test="memberAddStrategy != null">
+        #{memberAddStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="memberModifyStrategy != null and memberModifyStrategy != 'MANAGER_AGREE'">
+        #{memberModifyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="memberDelStrategy != null ">
+        #{memberDelStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="roleAddStrategy != null and roleAddStrategy != 'MANAGER_AGREE'">
+         #{ROLE_ADD_STRATEGY,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDelStrategy != null and roleDelStrategy != 'MANAGER_AGREE'">
+        #{ROLE_DEL_STRATEGY,jdbcType=VARCHAR},
+      </if>
+      <if test="roleModifyStrategy != null and roleModifyStrategy != 'MANAGER_AGREE'">
+        #{ROLE_MODIFY_STRATEGY,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    update CHANNEL
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="blockMaxSize != null">
+        BLOCK_MAX_SIZE = #{blockMaxSize,jdbcType=BIGINT},
+      </if>
+      <if test="blockMaxInterval != null">
+        BLOCK_MAX_INTERVAL = #{blockMaxInterval,jdbcType=BIGINT},
+      </if>
+      <if test="maxPeerCount != null">
+        MAX_PEER_COUNT = #{maxPeerCount,jdbcType=INTEGER},
+      </if>
+      <if test="peerAddStrategy != null">
+        PEER_ADD_STRATEGY = #{peerAddStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyStrategy != null">
+        MODIFY_STRATEGY = #{modifyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="scDepolyStrategy != null">
+        SC_DEPOLY_STRATEGY = #{scDepolyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="consensusAlgorithm != null">
+        CONSENSUS_ALGORITHM = #{consensusAlgorithm,jdbcType=VARCHAR},
+      </if>
+      <if test="txPoolSize != null">
+        TX_POOL_SIZE = #{txPoolSize,jdbcType=BIGINT},
+      </if>
+      <if test="allowTimeErrorSeconds != null">
+        ALLOW_TIME_ERROR_SECONDS = #{allowTimeErrorSeconds,jdbcType=BIGINT},
+      </if>
+      <if test="securityServiceKey != null">
+        SECURITY_SERVICE_KEY = #{securityServiceKey,jdbcType=VARCHAR},
+      </if>
+      <if test="extendsParams != null">
+        EXTENDS_PARAMS = #{extendsParams,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTransactionCount != null">
+        MAX_TRANSACTION_COUNT = #{maxTransactionCount,jdbcType=BIGINT},
+      </if>
+      <if test="available != null">
+        AVAILABLE = #{available,jdbcType=INTEGER},
+      </if>
+      <if test="memberAddStrategy != null">
+        MEMBER_ADD_STRATEGY = #{memberAddStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="memberDelStrategy != null">
+        MEMBER_DEL_STRATEGY = #{memberDelStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="roleAddStrategy != null and roleAddStrategy != 'MANAGER_AGREE'">
+        ROLE_ADD_STRATEGY = #{roleAddStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDelStrategy != null and roleDelStrategy != 'MANAGER_AGREE'" >
+        ROLE_DEL_STRATEGY = #{roleDelStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="roleModifyStrategy != null and roleModifyStrategy != 'MANAGER_AGREE'">
+        ROLE_MODIFY_STRATEGY = #{roleModifyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="memberModifyStrategy != null and memberModifyStrategy != 'MANAGER_AGREE'">
+        MEMBER_MODIFY_STRATEGY = #{memberModifyStrategy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where CHANNEL_ID = #{channelId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    update CHANNEL
+    set NAME = #{name,jdbcType=VARCHAR},
+      BLOCK_MAX_SIZE = #{blockMaxSize,jdbcType=BIGINT},
+      BLOCK_MAX_INTERVAL = #{blockMaxInterval,jdbcType=BIGINT},
+      MAX_PEER_COUNT = #{maxPeerCount,jdbcType=INTEGER},
+      PEER_ADD_STRATEGY = #{peerAddStrategy,jdbcType=VARCHAR},
+      MODIFY_STRATEGY = #{modifyStrategy,jdbcType=VARCHAR},
+      SC_DEPOLY_STRATEGY = #{scDepolyStrategy,jdbcType=VARCHAR},
+      CONSENSUS_ALGORITHM = #{consensusAlgorithm,jdbcType=VARCHAR},
+      TX_POOL_SIZE = #{txPoolSize,jdbcType=BIGINT},
+      ALLOW_TIME_ERROR_SECONDS = #{allowTimeErrorSeconds,jdbcType=BIGINT},
+      SECURITY_SERVICE_KEY = #{securityServiceKey,jdbcType=VARCHAR},
+      EXTENDS_PARAMS = #{extendsParams,jdbcType=VARCHAR},
+      MAX_TRANSACTION_COUNT = #{maxTransactionCount,jdbcType=BIGINT},
+       MEMBER_ADD_STRATEGY = #{memberAddStrategy,jdbcType=VARCHAR},
+    <if test="roleAddStrategy != null and roleAddStrategy != 'MANAGER_AGREE'">
+      ROLE_ADD_STRATEGY = #{roleAddStrategy,jdbcType=VARCHAR},
+    </if>
+    <if test="roleDelStrategy != null and roleDelStrategy != 'MANAGER_AGREE'" >
+      ROLE_DEL_STRATEGY = #{roleDelStrategy,jdbcType=VARCHAR},
+    </if>
+    <if test="roleModifyStrategy != null and roleModifyStrategy != 'MANAGER_AGREE'">
+      ROLE_MODIFY_STRATEGY = #{roleModifyStrategy,jdbcType=VARCHAR},
+    </if>
+    <if test="memberModifyStrategy != null and memberModifyStrategy != 'MANAGER_AGREE'">
+      MEMBER_MODIFY_STRATEGY = #{memberModifyStrategy,jdbcType=VARCHAR},
+    </if>
+    <if test="available != null">
+      AVAILABLE = #{available,jdbcType=INTEGER},
+    </if>
+      MEMBER_DEL_STRATEGY = #{memberDelStrategy,jdbcType=VARCHAR}
+    where CHANNEL_ID = #{channelId,jdbcType=CHAR}
+  </update>
+
+  <update id="updateFlagByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.ChannelModel">
+    update CHANNEL
+    set AVAILABLE = #{available,jdbcType=INTEGER}
+    where CHANNEL_ID = #{channelId,jdbcType=CHAR}
+  </update>
+
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CHANNEL
+    where NAME  like CONCAT('%', #{name}, '%') limit 1;
+  </select>
+</mapper>

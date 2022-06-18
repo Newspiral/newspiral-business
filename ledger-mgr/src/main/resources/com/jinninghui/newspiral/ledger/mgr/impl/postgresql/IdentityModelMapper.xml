@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.IdentityModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.IdentityModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="IDENTITY_ID" jdbcType="VARCHAR" property="identityId"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="SETUP_TIMESTAMP" jdbcType="TIMESTAMP" property="setupTimestamp"/>
+        <result column="EXTENDED_PROPS" jdbcType="VARCHAR" property="extendedProps"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, IDENTITY_ID, PARENT_ID, SETUP_TIMESTAMP,EXTENDED_PROPS
+  </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from IDENTITY
+        where IDENTITY_ID = #{identityId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from IDENTITY
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from IDENTITY
+    where IDENTITY_ID = #{identityId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.IdentityModel">
+    insert into IDENTITY (IDENTITY_ID, PARENT_ID,
+      SETUP_TIMESTAMP, EXTENDED_PROPS
+      )
+    values (#{identityId,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR},
+      #{setupTimestamp,jdbcType=TIMESTAMP}, #{extendedProps,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.IdentityModel">
+        insert into IDENTITY
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="identityId != null">
+                IDENTITY_ID,
+            </if>
+            <if test="parentId != null">
+                PARENT_ID,
+            </if>
+            <if test="setupTimestamp != null">
+                SETUP_TIMESTAMP,
+            </if>
+            <if test="extendedProps != null">
+                EXTENDED_PROPS,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="identityId != null">
+                #{identityId,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="setupTimestamp != null">
+                #{setupTimestamp,jdbcType=TIMESTAMP},
+            </if>
+            <if test="extendedProps != null">
+                #{extendedProps,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.IdentityModel">
+        update IDENTITY
+        <set>
+            <if test="parentId != null">
+                PARENT_ID = #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="setupTimestamp != null">
+                SETUP_TIMESTAMP = #{setupTimestamp,jdbcType=TIMESTAMP},
+            </if>
+            <if test="extendedProps != null">
+                EXTENDED_PROPS = #{extendedProps,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where IDENTITY_ID = #{identityId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.IdentityModel">
+    update IDENTITY
+    set
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      SETUP_TIMESTAMP = #{setupTimestamp,jdbcType=TIMESTAMP},
+      EXTENDED_PROPS = #{extendedProps,jdbcType=VARCHAR}
+    where IDENTITY_ID = #{identityId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

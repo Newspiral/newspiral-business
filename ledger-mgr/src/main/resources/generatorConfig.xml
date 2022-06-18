@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <context id="context1">
+    <commentGenerator>
+      <property name="suppressAllComments" value="true" />
+    </commentGenerator>
+    <jdbcConnection connectionURL="jdbc:mysql://192.168.0.17:3306/newspiral1"
+                    driverClass="com.mysql.cj.jdbc.Driver" password="newspiral@2018" userId="newspiral">
+      <property name="useInformationSchema" value="true"></property>
+    </jdbcConnection>
+    <javaModelGenerator targetPackage="com.jinninghui.newspiral.ledger.mgr.impl.domain" targetProject="C:\Git\NewSpiral\newspiral-business\ledger-mgr\src\main\java" />
+    <sqlMapGenerator targetPackage="com.jinninghui.newspiral.ledger.mgr.impl.mysql" targetProject="C:\Git\NewSpiral\newspiral-business\ledger-mgr\src\main\resources" />
+    <javaClientGenerator targetPackage="com.jinninghui.newspiral.ledger.mgr.impl.mapper" targetProject="C:\Git\NewSpiral\newspiral-business\ledger-mgr\src\main\java" type="XMLMAPPER" />
+
+    <table tableName="TRANSACTION" domainObjectName="TransactionModel" enableCountByExample="false"
+           enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+           selectByExampleQueryId="false">
+    </table>
+
+  </context>
+</generatorConfiguration>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.PeerCertificateModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <id column="PEER_ID" jdbcType="VARCHAR" property="peerId"/>
+        <result column="CERTIFICATE_CER_FILE" jdbcType="LONGVARCHAR" property="certificateCerFile"/>
+        <result column="FLAG" jdbcType="VARCHAR" property="flag"/>
+        <result column="CERTIFICATE_HASH" jdbcType="VARCHAR" property="certificateHash"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="BLOCK_HEIGHT" jdbcType="BIGINT" property="blockHeight"/>
+        <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId"/>
+        <result column="CERTIFICATE_KEY_STORE_FILE" jdbcType="LONGVARCHAR" property="certificateKeyStoreFile"/>
+        <result column="IS_LOCAL_PEER" jdbcType="INTEGER" property="isLocalPeer"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, PEER_ID,CERTIFICATE_CER_FILE,CERTIFICATE_HASH,FLAG,CREATE_TIME,UPDATE_TIME,BLOCK_HEIGHT,CHANNEL_ID,CERTIFICATE_KEY_STORE_FILE,IS_LOCAL_PEER
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER_CERTIFICATE
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER_CERTIFICATE
+    </select>
+
+    <select id="selectAllByChannelID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER_CERTIFICATE
+        where CHANNEL_ID = #{channelId,jdbcType = VARCHAR }
+    </select>
+
+    <select id="listByPeerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER_CERTIFICATE
+        where PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+        order by FLAG
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PEER_CERTIFICATE
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <select id="deleteByPeerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    delete from PEER_CERTIFICATE
+    where PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </select>
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+    insert into PEER_CERTIFICATE (PEER_ID,CERTIFICATE_CER_FILE,FLAG,CERTIFICATE_HASH,CREATE_TIME,UPDATE_TIME,BLOCK_HEIGHT,CHANNEL_ID,IS_LOCAL_PEER,CERTIFICATE_KEY_STORE_FILE)
+    values (#{peerId,jdbcType=VARCHAR},#{certificateCerFile,jdbcType=LONGVARCHAR},
+    #{flag,jdbcType=VARCHAR}, #{certificateHash,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{blockHeight,jdbcType=BIGINT},
+    #{channelId,jdbcType=VARCHAR},#{isLocalPeer,jdbcType=INTEGER},#{certificateKeyStoreFile,jdbcType=LONGVARCHAR})
+  </insert>
+
+    <insert id="insertSelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+        insert into PEER_CERTIFICATE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="peerId != null">
+                PEER_ID,
+            </if>
+            <if test="certificateCerFile != null">
+                CERTIFICATE_CER_FILE,
+            </if>
+            <if test="flag != null">
+                FLAG,
+            </if>
+            <if test="certificateHash != null">
+                CERTIFICATE_HASH,
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME,
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME,
+            </if>
+            <if test="channelId != null">
+                CHANNEL_ID,
+            </if>
+            <if test="isLocalPeer != null">
+                IS_LOCAL_PEER,
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                CERTIFICATE_KEY_STORE_FILE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="peerId != null">
+                #{peerId,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateCerFile != null">
+                #{certificateCerFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateHash != null">
+                #{certificateHash,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="channelId != null">
+                #{CHANNEL_ID,jdbcType=VARCHAR},
+            </if>
+            <if test="isLocalPeer != null">
+                #{isLocalPeer,jdbcType=INTEGER},
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+        update PEER_CERTIFICATE
+        <set>
+            <if test="peerId != null">
+                PEER_ID = #{peerId,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateCerFile != null">
+                CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="flag != null">
+                FLAG = #{flag,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateHash != null">
+                CERTIFICATE_HASH = #{certificateHash,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="blockHeight != null">
+                BLOCK_HEIGHT = #{blockHeight,jdbcType=BIGINT},
+            </if>
+            <if test="channelId != null">
+                CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="isLocalPeer != null">
+                IS_LOCAL_PEER = #{isLocalPeer,jdbcType=INTEGER},
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                CERTIFICATE_KEY_STORE_FILE = #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+    update PEER_CERTIFICATE
+    set PEER_ID = #{peerId,jdbcType=VARCHAR},
+      CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+      FLAG = #{flag,jdbcType=VARCHAR},
+      CERTIFICATE_HASH = #{certificateHash,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+       BLOCK_HEIGHT = #{blockHeight,jdbcType=BIGINT},
+       CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+        IS_LOCAL_PEER = #{isLocalPeer,jdbcType=INTEGER},
+      CERTIFICATE_KEY_STORE_FILE = #{certificateKeyStoreFile,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updatePeerCertificateFlagByPrimaryKey"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+    update PEER_CERTIFICATE
+    set  FLAG = #{flag,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      BLOCK_HEIGHT = #{blockHeight,jdbcType=BIGINT}
+    where CERTIFICATE_HASH = #{certificateHash,jdbcType=VARCHAR}
+    and  PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </update>
+
+    <update id="updatePeerCertificateFlagByPeerHash"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+    update PEER_CERTIFICATE
+    set  FLAG = #{flag,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      BLOCK_HEIGHT = #{blockHeight,jdbcType=BIGINT}
+    where CERTIFICATE_HASH = #{certificateHash,jdbcType=VARCHAR}
+    and  PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </update>
+    <update id="revokePeerCertificate"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerCertificateModel">
+    update PEER_CERTIFICATE
+    set  FLAG = 2,
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      BLOCK_HEIGHT = #{blockHeight,jdbcType=BIGINT}
+    where FLAG != 2
+    and  PEER_ID = #{peerId,jdbcType=VARCHAR} and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </update>
+
+    <delete id="deleteByChannelId" parameterType="java.lang.String">
+    delete from PEER_CERTIFICATE
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </delete>
+    <select id="deleteBycertificateHash" parameterType="java.lang.String" resultMap="BaseResultMap">
+    delete from PEER_CERTIFICATE
+    where PEER_ID = #{peerId,jdbcType=VARCHAR}
+    and CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+     and CERTIFICATE_HASH = #{certificateHash,jdbcType=VARCHAR}
+  </select>
+    <select id="queryLatestChannelChangeHeight" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT MAX(PEER_CERTIFICATE.BLOCK_HEIGHT) as BLOCK_HEIGHT FROM PEER_CERTIFICATE
+    WHERE CHANNEL_ID = #{channelId,jdbcType=VARCHAR};
+  </select>
+
+  <select id="selectByPeerIdAndChannelId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from peer_certificate
+    WHERE PEER_ID = #{peerId} and CHANNEL_ID = #{channelId} and FLAG = '0';
+  </select>
+
+</mapper>

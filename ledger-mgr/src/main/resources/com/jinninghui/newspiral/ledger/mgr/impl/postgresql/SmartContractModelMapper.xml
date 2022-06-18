@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.SmartContractModelMapper">
+  <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModel">
+    <id column="SC_NAME" jdbcType="VARCHAR" property="scName" />
+    <id column="SC_VERSION" jdbcType="VARCHAR" property="scVersion" />
+    <id column="SC_CHANNEL_ID" jdbcType="VARCHAR" property="scChannelId" />
+    <result column="SC_CLASS_HASH" jdbcType="VARCHAR" property="scClassHash" />
+    <result column="SETUP_TIMESTAMP" jdbcType="TIMESTAMP" property="setupTimestamp" />
+    <result column="FLAG" jdbcType="VARCHAR" property="flag" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="EXTENDED_DATA" jdbcType="VARCHAR" property="extendedData"/>
+    <result column="ALISA" jdbcType="VARCHAR" property="alisa"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelWithBLOBs">
+    <!--<result column="SC_SOURCE_CODE" jdbcType="LONGVARCHAR" property="scSourceCode" />
+    <result column="SC_CLASS_FILE" jdbcType="LONGVARCHAR" property="scClassFile" />
+    <result column="SC_INNER_CLASS_FILES" jdbcType="LONGVARCHAR" property="scInnerClassFiles"/>-->
+    <result column="SC_SOURCE_CODE" jdbcType="VARCHAR" property="scSourceCode" />
+    <result column="SC_CLASS_FILE" jdbcType="VARCHAR" property="scClassFile" />
+    <result column="SC_INNER_CLASS_FILES" jdbcType="VARCHAR" property="scInnerClassFiles"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    SC_NAME, SC_VERSION, SC_CHANNEL_ID, SC_CLASS_HASH, SETUP_TIMESTAMP,FLAG,UPDATE_TIME,EXTENDED_DATA,ALISA
+  </sql>
+  <sql id="Blob_Column_List">
+    SC_SOURCE_CODE, SC_CLASS_FILE , SC_INNER_CLASS_FILES
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelKey" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SMART_CONTRACT
+    where  SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+    <if test="scName != null">
+     and SC_NAME = #{scName,jdbcType=VARCHAR}
+    </if>
+    <if test="alisa != null">
+      and ALISA = #{alisa,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+
+  <select id="selectActiveByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelKey" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SMART_CONTRACT
+    where   SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+    and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+    and FLAG!=3
+    <if test="scName != null">
+      and SC_NAME = #{scName,jdbcType=VARCHAR}
+    </if>
+    <if test="alisa != null">
+      and ALISA = #{alisa,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+
+  <select id="selectByName" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelKey" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SMART_CONTRACT
+    where SC_NAME=#{scName} and FLAG!=3;
+  </select>
+
+  <select id="selectByChannelId" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SMART_CONTRACT
+    where SC_CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </select>
+
+
+
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SMART_CONTRACT where FLAG!=3
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelKey">
+    delete from SMART_CONTRACT
+    where SC_NAME = #{scName,jdbcType=VARCHAR}
+      and SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelWithBLOBs">
+    insert into SMART_CONTRACT (SC_NAME, SC_VERSION, SC_CHANNEL_ID,
+      SC_CLASS_HASH, SETUP_TIMESTAMP, SC_SOURCE_CODE, 
+      SC_CLASS_FILE, SC_INNER_CLASS_FILES, FLAG,EXTENDED_DATA,ALISA)
+    values (#{scName,jdbcType=VARCHAR}, #{scVersion,jdbcType=VARCHAR}, #{scChannelId,jdbcType=VARCHAR}, 
+      #{scClassHash,jdbcType=VARCHAR}, #{setupTimestamp,jdbcType=TIMESTAMP}, #{scSourceCode,jdbcType=LONGVARCHAR}, 
+      #{scClassFile,jdbcType=LONGVARCHAR},#{scInnerClassFiles,jdbcType=LONGVARCHAR},#{flag,jdbcType=VARCHAR},#{extendedData,jdbcType=VARCHAR}
+      ,#{alisa,jdbcType=VARCHAR})
+      on conflict (SC_NAME, SC_VERSION, SC_CHANNEL_ID) do UPDATE
+      set SC_CLASS_HASH=EXCLUDED.SC_CLASS_HASH,
+      SETUP_TIMESTAMP=EXCLUDED.SETUP_TIMESTAMP,SC_SOURCE_CODE=EXCLUDED.SC_SOURCE_CODE,
+      SC_CLASS_FILE=EXCLUDED.SC_CLASS_FILE,SC_INNER_CLASS_FILES=EXCLUDED.SC_INNER_CLASS_FILES,FLAG=EXCLUDED.FLAG,
+      EXTENDED_DATA=EXCLUDED.EXTENDED_DATA, ALISA=EXCLUDED.ALISA;
+  </insert>
+  <insert id="insertSelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelWithBLOBs">
+    insert into SMART_CONTRACT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="scName != null">
+        SC_NAME,
+      </if>
+      <if test="scVersion != null">
+        SC_VERSION,
+      </if>
+      <if test="scChannelId != null">
+        SC_CHANNEL_ID,
+      </if>
+      <if test="scClassHash != null">
+        SC_CLASS_HASH,
+      </if>
+      <if test="setupTimestamp != null">
+        SETUP_TIMESTAMP,
+      </if>
+      <if test="scSourceCode != null">
+        SC_SOURCE_CODE,
+      </if>
+      <if test="scClassFile != null">
+        SC_CLASS_FILE,
+      </if>
+      <if test="scInnerClassFiles != null">
+        SC_INNER_CLASS_FILES,
+      </if>
+      <if test="flag != null">
+        FLAG,
+      </if>
+      <if test="extendedData != null">
+        EXTENDED_DATA,
+      </if>
+      <if test="alisa != null">
+        ALISA,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="scName != null">
+        #{scName,jdbcType=VARCHAR},
+      </if>
+      <if test="scVersion != null">
+        #{scVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="scChannelId != null">
+        #{scChannelId,jdbcType=VARCHAR},
+      </if>
+      <if test="scClassHash != null">
+        #{scClassHash,jdbcType=VARCHAR},
+      </if>
+      <if test="setupTimestamp != null">
+        #{setupTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scSourceCode != null">
+        #{scSourceCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scClassFile != null">
+        #{scClassFile,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scInnerClassFiles != null">
+        #{scInnerClassFiles,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="extendedData != null">
+        #{extendedData,jdbcType=VARCHAR},
+      </if>
+      <if test="alisa != null">
+        #{alisa,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelWithBLOBs">
+    update SMART_CONTRACT
+    <set>
+      <if test="scClassHash != null">
+        SC_CLASS_HASH = #{scClassHash,jdbcType=VARCHAR},
+      </if>
+      <if test="setupTimestamp != null">
+        SETUP_TIMESTAMP = #{setupTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scSourceCode != null">
+        SC_SOURCE_CODE = #{scSourceCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scClassFile != null">
+        SC_CLASS_FILE = #{scClassFile,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="scClassFile != null">
+        SC_INNER_CLASS_FILES = #{scInnerClassFiles,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="flag != null">
+        FLAG = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extendedData != null">
+        EXTENDED_DATA = #{extendedData,jdbcType=TIMESTAMP},
+      </if>
+      <if test="alisa != null">
+        ALISA = #{alisa,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SC_NAME = #{scName,jdbcType=VARCHAR}
+      and SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModelWithBLOBs">
+    update SMART_CONTRACT
+    set SC_CLASS_HASH = #{scClassHash,jdbcType=VARCHAR},
+      SETUP_TIMESTAMP = #{setupTimestamp,jdbcType=TIMESTAMP},
+      SC_SOURCE_CODE = #{scSourceCode,jdbcType=LONGVARCHAR},
+      SC_CLASS_FILE = #{scClassFile,jdbcType=LONGVARCHAR},
+      SC_INNER_CLASS_FILES = #{scInnerClassFiles,jdbcType=LONGVARCHAR},
+     FLAG = #{flag,jdbcType=VARCHAR},
+     UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where SC_NAME = #{scName,jdbcType=VARCHAR}
+      and SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.SmartContractModel">
+    update SMART_CONTRACT
+    set SC_CLASS_HASH = #{scClassHash,jdbcType=VARCHAR},
+      SETUP_TIMESTAMP = #{setupTimestamp,jdbcType=TIMESTAMP}
+    where SC_NAME = #{scName,jdbcType=VARCHAR}
+      and SC_VERSION = #{scVersion,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR}
+  </update>
+  <delete id="deleteByChannelId" >
+    delete from SMART_CONTRACT
+    where  SC_CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </delete>
+  <!-- 查询信息列表 -->
+  <select id="getAllList" parameterType="com.jinninghui.newspiral.common.entity.smartcontract.QuerySmartContractListReq"
+          resultMap="ResultMapWithBLOBs">
+    SELECT
+     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    FROM SMART_CONTRACT T1
+    WHERE 1=1
+    <if test="vo.channelId != null">
+      AND SC_CHANNEL_ID = #{vo.channelId}
+    </if>
+    <if test="vo.flag != null">
+      AND FLAG = #{vo.flag}
+    </if>
+    LIMIT #{vo.pageNo} OFFSET #{vo.pageSize}
+  </select>
+
+  <!-- 查询列表数量 -->
+  <select id="fetchAllCount" parameterType="com.jinninghui.newspiral.common.entity.smartcontract.QuerySmartContractListReq"
+          resultType="int">
+    SELECT count(1) count
+    FROM SMART_CONTRACT
+    WHERE 1=1
+    <if test="vo.channelId != null">
+      AND SC_CHANNEL_ID = #{vo.channelId}
+    </if>
+    <if test="vo.flag != null">
+      AND FLAG = #{vo.flag}
+    </if>
+  </select>
+
+  <update id="destructionSmartCintract" parameterType="java.lang.String">
+    update SMART_CONTRACT
+    set FLAG = 3,
+      UPDATE_TIME = now()
+    where SC_NAME = #{scName,jdbcType=VARCHAR}
+      and SC_CHANNEL_ID = #{scChannelId,jdbcType=VARCHAR} and FLAG != 3
+  </update>
+
+</mapper>

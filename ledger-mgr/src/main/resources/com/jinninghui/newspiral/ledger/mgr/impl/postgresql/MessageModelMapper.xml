@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.MessageModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.MessageModel">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="VIEW_NUMBER" jdbcType="BIGINT" property="viewNumber" />
+        <result column="CONTENT" jdbcType="LONGVARCHAR" property="content" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, VIEW_NUMBER, CONTENT
+  </sql>
+    <select id="selectByViewNo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from MESSAGE
+        where VIEW_NUMBER &gt;= #{viewNo, jdbcType=BIGINT} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByViewNo">
+        delete from MESSAGE
+        where VIEW_NUMBER &lt;= #{viewNo,jdbcType=BIGINT} AND CHANNEL_ID=#{channelId,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="insert">
+    insert into MESSAGE (VIEW_NUMBER, CONTENT, CHANNEL_ID)
+    values ( #{record.viewNumber,jdbcType=BIGINT}, #{record.content,jdbcType=LONGVARCHAR}, #{record.channelId,jdbcType=VARCHAR})
+  </insert>
+</mapper>

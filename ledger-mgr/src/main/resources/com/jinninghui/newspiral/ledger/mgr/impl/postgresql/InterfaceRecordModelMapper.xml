@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.InterfaceRecordMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.InterfaceRecordModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="METHOD_NAME" jdbcType="VARCHAR" property="methodName"/>
+        <result column="PROTOCOL_NAME" jdbcType="VARCHAR" property="protocolName"/>
+        <result column="IDENTITY_TYPE" jdbcType="VARCHAR" property="identityType"/>
+        <result column="IDENTITY_VALUE" jdbcType="VARCHAR" property="identityValue"/>
+        <result column="CHANNEL_ID" jdbcType="CHAR" property="channelId"/>
+        <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="CALL_TIME" jdbcType="BIGINT" property="callTime"/>
+        <result column="SUCCESSED" jdbcType="INTEGER" property="successed"/>
+        <result column="ERROR_MSG" jdbcType="VARCHAR" property="errorMsg"/>
+        <result column="SC_ALISA" jdbcType="VARCHAR" property="scAlisa"/>
+        <result column="SC_METHOD_NAME" jdbcType="VARCHAR" property="scMethodName"/>
+        <result column="SC_VERSION" jdbcType="VARCHAR" property="scVersion"/>
+    </resultMap>
+
+
+   <insert id="batchInsert">
+       insert into INTERFACE_RECORD( METHOD_NAME,PROTOCOL_NAME,IDENTITY_TYPE,
+       IDENTITY_VALUE,CHANNEL_ID,START_TIME,END_TIME,CALL_TIME,SUCCESSED,
+       ERROR_MSG,SC_ALISA,SC_METHOD_NAME,SC_VERSION)
+       values
+       <foreach collection="list" item="record" index="index" separator=",">
+       (#{record.methodName,jdbcType=VARCHAR},#{record.protocolName,jdbcType=VARCHAR},
+           #{record.identityType,jdbcType=VARCHAR},#{record.identityValue,jdbcType=VARCHAR},
+           #{record.channelId,jdbcType=CHAR},#{record.startTime,jdbcType=TIMESTAMP},
+           #{record.endTime,jdbcType=TIMESTAMP},#{record.callTime,jdbcType=BIGINT},
+           #{record.successed,jdbcType=INTEGER},#{record.errorMsg,jdbcType=VARCHAR},
+           #{record.scAlisa,jdbcType=VARCHAR},#{record.scMethodName,jdbcType=VARCHAR},
+           #{record.scVersion,jdbcType=VARCHAR})
+       </foreach>
+   </insert>
+
+    <select id="slectTotalCount" parameterType="com.jinninghui.newspiral.common.entity.record.InterfaceRecordBO" resultType="java.lang.Long">
+        select count(*) from INTERFACE_RECORD
+        where START_TIME &gt;= #{interfaceBo.startTime} and END_TIME &lt;= #{interfaceBo.endTime}
+        <if test="interfaceBo.methodName != null and interfaceBo.methodName != ''">
+            and METHOD_NAME = #{interfaceBo.methodName,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.scAlisa != null and interfaceBo.scAlisa != ''">
+            and SC_ALISA = #{interfaceBo.scAlisa,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.successed != null">
+            and SUCCESSED = #{interfaceBo.successed,jdbcType=INTEGER}
+        </if>
+        <if test="interfaceBo.identityType != null and interfaceBo.identityType != ''">
+            and IDENTITY_TYPE = #{interfaceBo.identityType,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.identityValue != null and interfaceBo.identityValue != ''">
+            and IDENTITY_VALUE = #{interfaceBo.identityValue,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.channelId != null and interfaceBo.channelId != ''">
+            and CHANNEL_ID = #{interfaceBo.channelId,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.scMethodName != null and interfaceBo.scMethodName != ''">
+            and SC_METHOD_NAME = #{interfaceBo.scMethodName,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectByPage" parameterType="com.jinninghui.newspiral.common.entity.record.InterfaceRecordBO" resultMap="BaseResultMap">
+        select * from interface_record
+        where START_TIME &gt;= #{interfaceBo.startTime} and END_TIME &lt;= #{interfaceBo.endTime}
+        <if test="interfaceBo.methodName != null and interfaceBo.methodName != ''">
+            and METHOD_NAME = #{interfaceBo.methodName,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.scAlisa != null and interfaceBo.scAlisa != ''">
+            and SC_ALISA = #{interfaceBo.scAlisa,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.successed != null">
+            and SUCCESSED = #{interfaceBo.successed,jdbcType=INTEGER}
+        </if>
+        <if test="interfaceBo.identityType != null and interfaceBo.identityType != ''">
+            and IDENTITY_TYPE = #{interfaceBo.identityType,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.identityValue != null and interfaceBo.identityValue != ''">
+            and IDENTITY_VALUE = #{interfaceBo.identityValue,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.channelId != null and interfaceBo.channelId != ''">
+            and CHANNEL_ID = #{interfaceBo.channelId,jdbcType=VARCHAR}
+        </if>
+        <if test="interfaceBo.scMethodName != null and interfaceBo.scMethodName != ''">
+            and SC_METHOD_NAME = #{interfaceBo.scMethodName,jdbcType=VARCHAR}
+        </if>
+        limit #{interfaceBo.start} offset #{interfaceBo.pageSize}
+    </select>
+
+    <delete id="deleteFromDayTime">
+        DELETE FROM interface_record WHERE START_TIME &lt;= #{beforeDayTime,jdbcType=VARCHAR};
+    </delete>
+</mapper>

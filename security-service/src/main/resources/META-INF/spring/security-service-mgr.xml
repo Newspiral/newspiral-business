@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置需要导出的JVM服务 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://sofastack.io/schema/sofaboot"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd"
+       default-autowire="byName">
+
+    <bean id="securityServiceMgr" class="com.jinninghui.newspiral.security.impl.SecurityServiceMgrImpl" init-method="init">
+    </bean>
+
+    <sofa:service ref="securityServiceMgr" interface="com.jinninghui.newspiral.security.SecurityServiceMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <bean id="startSecurityMgr" class="com.jinninghui.newspiral.security.impl.StartSecurityMgrImpl" init-method="init" >
+    </bean>
+
+    <sofa:service ref="startSecurityMgr" interface="com.jinninghui.newspiral.security.StartSecurityMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <bean id="dataSecurityMgr" class="com.jinninghui.newspiral.security.impl.DataSecurityMgrImpl" >
+    </bean>
+
+    <sofa:service ref="dataSecurityMgr" interface="com.jinninghui.newspiral.security.DataSecurityMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <bean id="sandBoxCacheMgr" class="com.jinninghui.newspiral.security.contract.SandBoxCache" >
+    </bean>
+
+    <sofa:service ref="sandBoxCacheMgr" interface="com.jinninghui.newspiral.security.contract.SandBoxCacheMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+<!--
+    <bean memberId="osccaSecurityService" class="com.jinninghui.newspiral.security.impl.OsccaSecurityServiceImpl">
+    </bean>
+
+    <sofa:service ref="osccaSecurityService" interface="com.jinninghui.newspiral.security.SecurityService">
+        <sofa:binding.jvm/>
+    </sofa:service>
+-->
+
+</beans>

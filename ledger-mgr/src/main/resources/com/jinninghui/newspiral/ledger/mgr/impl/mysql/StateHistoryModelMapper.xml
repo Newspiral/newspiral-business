@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.StateHistoryModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.common.entity.state.StateHistoryModel">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="STATE_KEY" jdbcType="LONGVARCHAR" property="stateKey" />
+        <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+        <result column="TRANSACTION_ID" jdbcType="BIGINT" property="transactionId" />
+        <result column="TRANS_HASH_STR" jdbcType="VARCHAR" property="transHashStr" />
+        <result column="CLIENT_IDENTITY_KEY" jdbcType="VARCHAR" property="clientIdentityKey" />
+        <result column="SMART_CONTRACT_ID" jdbcType="VARCHAR" property="smartContractId" />
+        <result column="SMART_CONTRACT_METHOD_NAME" jdbcType="VARCHAR" property="smartContractMethodName" />
+        <result column="BLOCK_ID" jdbcType="BIGINT" property="blockId"/>
+        <result column="INDEX_IN_BLOCK" jdbcType="INTEGER" property="indexInBlock" />
+        <result column="BLOCK_HASH_STR" jdbcType="VARCHAR" property="blockHashStr" />
+        <result column="CONSENSUS_TIMESTAMP" jdbcType="TIMESTAMP" property="consensusTimestamp"/>
+        <result column="SUCCESSED" jdbcType="TINYINT" property="successed" />
+        <result column="ERROR_MSG" jdbcType="VARCHAR" property="errorMsg" />
+        <result column="CLIENT_TIMESTAMP" jdbcType="TIMESTAMP" property="clientTimestamp" />
+        <result column="INSERT_VERSION" jdbcType="BIGINT" property="insertVersion" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, STATE_KEY, CHANNEL_ID,TRANSACTION_ID,TRANS_HASH_STR, CLIENT_IDENTITY_KEY,SMART_CONTRACT_ID,SMART_CONTRACT_METHOD_NAME,
+    BLOCK_ID,INDEX_IN_BLOCK,BLOCK_HASH_STR,CONSENSUS_TIMESTAMP,SUCCESSED,ERROR_MSG,CLIENT_TIMESTAMP,INSERT_VERSION
+    </sql>
+
+    <select id="selectTotalCount" parameterType="com.jinninghui.newspiral.common.entity.state.StateHistoryBO" resultType="java.lang.Long">
+        select count(STATE_KEY) from `state_history`
+        where CLIENT_TIMESTAMP &gt;= #{stateHistoryBO.startTime} and CLIENT_TIMESTAMP &lt;= #{stateHistoryBO.endTime}
+        and STATE_KEY = #{stateHistoryBO.stateKey,jdbcType=LONGVARCHAR}
+        and CHANNEL_ID = #{stateHistoryBO.channelId,jdbcType=VARCHAR};
+    </select>
+
+    <select id="selectPageTransactionList" parameterType="com.jinninghui.newspiral.common.entity.state.StateHistoryBO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `state_history`
+        where CLIENT_TIMESTAMP &gt;= #{stateHistoryBO.startTime} and CLIENT_TIMESTAMP &lt;= #{stateHistoryBO.endTime}
+        and STATE_KEY = #{stateHistoryBO.stateKey,jdbcType=LONGVARCHAR}
+        and CHANNEL_ID = #{stateHistoryBO.channelId,jdbcType=VARCHAR}
+        limit #{stateHistoryBO.start},#{stateHistoryBO.pageSize}
+    </select>
+
+    <select id="selectLatestBlockId" resultType="java.lang.Long">
+        select max(BLOCK_ID) from `state_history`
+        where CHANNEL_ID = #{channelId};
+    </select>
+
+    <delete id="deleteLatestBlockData">
+       DELETE from `state_history`
+       where
+       BLOCK_ID = (
+       select id from (
+       SELECT max(BLOCK_ID) as id from state_history
+       where CHANNEL_ID = #{channelId}
+       ) temp)
+       and CHANNEL_ID = #{channelId};
+    </delete>
+
+    <insert id="batchInsert">
+        insert into `state_history` (STATE_KEY, CHANNEL_ID, TRANSACTION_ID,
+        TRANS_HASH_STR, CLIENT_IDENTITY_KEY, SMART_CONTRACT_ID,
+        SMART_CONTRACT_METHOD_NAME, BLOCK_ID, INDEX_IN_BLOCK,
+        BLOCK_HASH_STR, CONSENSUS_TIMESTAMP, SUCCESSED, ERROR_MSG,
+        CLIENT_TIMESTAMP,INSERT_VERSION)
+        values
+        <foreach collection="list" item="record" index="index" separator=",">
+            (#{record.stateKey},#{record.channelId},#{record.transactionId},
+            #{record.transHashStr}, #{record.clientIdentityKey}, #{record.smartContractId},
+            #{record.smartContractMethodName}, #{record.blockId}, #{record.indexInBlock},
+            #{record.blockHashStr}, #{record.consensusTimestamp},
+            #{record.successed}, #{record.errorMsg},#{record.clientTimestamp},
+            #{record.insertVersion})
+        </foreach> on duplicate key update
+        STATE_KEY=VALUES(STATE_KEY), CHANNEL_ID=VALUES(CHANNEL_ID),
+        TRANSACTION_ID=VALUES(TRANSACTION_ID), TRANS_HASH_STR=VALUES(TRANS_HASH_STR),
+        CLIENT_IDENTITY_KEY=VALUES(CLIENT_IDENTITY_KEY),SMART_CONTRACT_ID=VALUES(SMART_CONTRACT_ID),
+        SMART_CONTRACT_METHOD_NAME=VALUES(SMART_CONTRACT_METHOD_NAME),
+        INDEX_IN_BLOCK=VALUES(INDEX_IN_BLOCK),BLOCK_HASH_STR=VALUES(BLOCK_HASH_STR),
+        CONSENSUS_TIMESTAMP=VALUES(CONSENSUS_TIMESTAMP), SUCCESSED=VALUES(SUCCESSED),
+        ERROR_MSG=VALUES(ERROR_MSG),CLIENT_TIMESTAMP=VALUES(CLIENT_TIMESTAMP),
+        INSERT_VERSION=VALUES(INSERT_VERSION);
+    </insert>
+
+    <select id="selectLatestInsertVersion" resultType="java.lang.Long">
+        SELECT max(INSERT_VERSION) from state_history
+    </select>
+
+</mapper>

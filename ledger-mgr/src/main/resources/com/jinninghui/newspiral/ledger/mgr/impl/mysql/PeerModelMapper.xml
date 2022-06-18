@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.PeerModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PEER_ID_VALUE" jdbcType="VARCHAR" property="peerIdValue"/>
+        <result column="PEER_ID_TYPE" jdbcType="VARCHAR" property="peerIdType"/>
+        <result column="SERVICE_URLS" jdbcType="VARCHAR" property="serviceUrls"/>
+        <result column="ORGANIZATION_ID_TYPE" jdbcType="VARCHAR" property="organizationIdType"/>
+        <result column="ORGANIZATION_ID_VALUE" jdbcType="VARCHAR" property="organizationIdValue"/>
+        <result column="IS_LOCAL_PEER" jdbcType="INTEGER" property="isLocalPeer"/>
+        <result column="CERTIFICATE_CER_FILE" jdbcType="LONGVARCHAR" property="certificateCerFile"/>
+        <result column="CERTIFICATE_KEY_STORE_FILE" jdbcType="LONGVARCHAR" property="certificateKeyStoreFile"/>
+        <result column="CERTIFICATE_ALIAS" jdbcType="VARCHAR" property="certificateAlias"/>
+        <result column="CERTIFICATE_STORE_PASS" jdbcType="VARCHAR" property="certificateStorePass"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, PEER_ID_VALUE, PEER_ID_TYPE, SERVICE_URLS, ORGANIZATION_ID_TYPE, ORGANIZATION_ID_VALUE,
+    IS_LOCAL_PEER,CERTIFICATE_CER_FILE,CERTIFICATE_KEY_STORE_FILE,CERTIFICATE_ALIAS,CERTIFICATE_STORE_PASS
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER
+        where PEER_ID_VALUE = #{peerIdValue,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectLocalPeer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER
+        where IS_LOCAL_PEER >=1
+    </select>
+
+    <select id="selecetServiceUrls" resultType="java.lang.String">
+    select
+    SERVICE_URLS
+    from PEER
+  </select>
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER
+    </select>
+
+    <select id="selectAllByIssuerID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PEER
+        where ORGANIZATION_ID_VALUE = # {organizationIdValue, jdbcType=VARCHAR }
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PEER
+    where PEER_ID_VALUE = #{peerIdValue,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+    replace into PEER (PEER_ID_VALUE, PEER_ID_TYPE, SERVICE_URLS,
+      ORGANIZATION_ID_TYPE, ORGANIZATION_ID_VALUE,
+      IS_LOCAL_PEER,CERTIFICATE_CER_FILE,CERTIFICATE_KEY_STORE_FILE,CERTIFICATE_ALIAS,CERTIFICATE_STORE_PASS)
+    values (#{peerIdValue,jdbcType=VARCHAR}, #{peerIdType,jdbcType=VARCHAR}, #{serviceUrls,jdbcType=VARCHAR},
+      #{organizationIdType,jdbcType=VARCHAR}, #{organizationIdValue,jdbcType=VARCHAR},
+      #{isLocalPeer,jdbcType=INTEGER},#{certificateCerFile,jdbcType=LONGVARCHAR},#{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+      #{certificateAlias,jdbcType=VARCHAR},#{certificateStorePass,jdbcType=VARCHAR})
+  </insert>
+
+    <insert id="insertSelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+        insert ignore into PEER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="peerIdValue != null">
+                PEER_ID_VALUE,
+            </if>
+            <if test="peerIdType != null">
+                PEER_ID_TYPE,
+            </if>
+            <if test="serviceUrls != null">
+                SERVICE_URLS,
+            </if>
+            <if test="organizationIdType != null">
+                ORGANIZATION_ID_TYPE,
+            </if>
+            <if test="organizationIdValue != null">
+                ORGANIZATION_ID_VALUE,
+            </if>
+            <if test="isLocalPeer != null">
+                IS_LOCAL_PEER,
+            </if>
+            <if test="certificateCerFile != null">
+                CERTIFICATE_CER_FILE,
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                CERTIFICATE_KEY_STORE_FILE,
+            </if>
+            <if test="certificateAlias != null">
+                CERTIFICATE_ALIAS,
+            </if>
+            <if test="certificateStorePass != null">
+                CERTIFICATE_STORE_PASS,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="peerIdValue != null">
+                #{peerIdValue,jdbcType=VARCHAR},
+            </if>
+            <if test="peerIdType != null">
+                #{peerIdType,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceUrls != null">
+                #{serviceUrls,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationIdType != null">
+                #{organizationIdType,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationIdValue != null">
+                #{organizationIdValue,jdbcType=VARCHAR},
+            </if>
+            <if test="isLocalPeer != null">
+                #{isLocalPeer,jdbcType=INTEGER},
+            </if>
+            <if test="certificateCerFile != null">
+                #{certificateCerFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="certificateAlias != null">
+                #{certificateAlias,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateStorePass != null">
+                #{certificateStorePass,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+        update PEER
+        <set>
+            <if test="peerIdType != null">
+                PEER_ID_TYPE = #{peerIdType,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceUrls != null">
+                SERVICE_URLS = #{serviceUrls,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationIdType != null">
+                ORGANIZATION_ID_TYPE = #{organizationIdType,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationIdValue != null">
+                ORGANIZATION_ID_VALUE = #{organizationIdValue,jdbcType=VARCHAR},
+            </if>
+            <if test="isLocalPeer != null">
+                IS_LOCAL_PEER = #{isLocalPeer,jdbcType=INTEGER},
+            </if>
+            <if test="certificateCerFile != null">
+                CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="certificateKeyStoreFile != null">
+                CERTIFICATE_KEY_STORE_FILE = #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="certificateAlias != null">
+                CERTIFICATE_ALIAS = #{certificateAlias,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateStorePass != null">
+                CERTIFICATE_STORE_PASS = #{certificateStorePass,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where PEER_ID_VALUE = #{peerIdValue,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+    update PEER
+    set PEER_ID_TYPE = #{peerIdType,jdbcType=VARCHAR},
+      SERVICE_URLS = #{serviceUrls,jdbcType=VARCHAR},
+      ORGANIZATION_ID_TYPE = #{organizationIdType,jdbcType=VARCHAR},
+      ORGANIZATION_ID_VALUE = #{organizationIdValue,jdbcType=VARCHAR},
+      IS_LOCAL_PEER = #{isLocalPeer,jdbcType=INTEGER},
+      CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+      CERTIFICATE_KEY_STORE_FILE = #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+      CERTIFICATE_ALIAS = #{certificateAlias,jdbcType=VARCHAR},
+      CERTIFICATE_STORE_PASS = #{certificateStorePass,jdbcType=VARCHAR}
+    where PEER_ID_VALUE = #{peerIdValue,jdbcType=VARCHAR}
+  </update>
+    <update id="updatePeerCertificateByPrimaryKey"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.PeerModel">
+        update PEER
+        set CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+        <if test="certificateKeyStoreFile != null and certificateKeyStoreFile != ''">
+            CERTIFICATE_KEY_STORE_FILE = #{certificateKeyStoreFile,jdbcType=LONGVARCHAR},
+        </if>
+        CERTIFICATE_ALIAS = #{certificateAlias,jdbcType=VARCHAR},
+        CERTIFICATE_STORE_PASS = #{certificateStorePass,jdbcType=VARCHAR}
+        where PEER_ID_VALUE = #{peerIdValue,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectValidPeers" resultMap="BaseResultMap">
+    SELECT * FROM PEER WHERE PEER.PEER_ID_VALUE IN
+    ( SELECT PEER_CHANNEL.PEER_ID FROM PEER_CHANNEL
+    WHERE PEER_CHANNEL.CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+    AND (PEER_CHANNEL.IN_BLOCK_HEIGHT &lt; #{height,jdbcType=BIGINT} || PEER_CHANNEL.IN_BLOCK_HEIGHT = 0)
+    AND (PEER_CHANNEL.OUT_BLOCK_HEIGHT + 3 &gt; #{height,jdbcType=BIGINT} || PEER_CHANNEL.OUT_BLOCK_HEIGHT = 0))
+  </select>
+
+    <select id="listPeerCertificateBlackList" resultMap="BaseResultMap">
+    select
+      distinct  T2.PEER_ID_VALUE, T2.PEER_ID_TYPE, T2.SERVICE_URLS, T2.ORGANIZATION_ID_TYPE, T2.ORGANIZATION_ID_VALUE,
+    T2.IS_LOCAL_PEER,T2.CERTIFICATE_CER_FILE,T2.CERTIFICATE_KEY_STORE_FILE,T2.CERTIFICATE_ALIAS,T2.CERTIFICATE_STORE_PASS
+    from PEER_CERTIFICATE T1
+    left join PEER T2 on T1.PEER_ID=T2.PEER_ID_VALUE
+    where T1.FLAG!=3
+  </select>
+</mapper>

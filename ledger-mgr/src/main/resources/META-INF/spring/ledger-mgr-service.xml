@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置需要导出的JVM服务 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://sofastack.io/schema/sofaboot"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd"
+       default-autowire="byName">
+    <!--  账本管理对模块外开放的接口   -->
+    <bean id="smartContractMgr" class="com.jinninghui.newspiral.ledger.mgr.impl.SmartContractMgrImpl">
+    </bean>
+
+    <sofa:service ref="smartContractMgr" interface="com.jinninghui.newspiral.ledger.mgr.SmartContractMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+
+    <!--  账本管理对模块外开放的接口   -->
+    <bean id="ledgerMgr" class="com.jinninghui.newspiral.ledger.mgr.impl.LedgerMgrImpl">
+    </bean>
+
+    <sofa:service ref="ledgerMgr" interface="com.jinninghui.newspiral.ledger.mgr.LedgerMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <!--  成员账本管理对模块外开放的接口   -->
+    <bean id="memberLedgerMgr" class="com.jinninghui.newspiral.ledger.mgr.impl.MemberLedgerMgrImpl">
+    </bean>
+
+    <sofa:service ref="memberLedgerMgr" interface="com.jinninghui.newspiral.ledger.mgr.MemberLedgerMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+
+    <bean id="localConfigLedgerMgr" class="com.jinninghui.newspiral.ledger.mgr.impl.LocalConfigLedgerMgrImpl">
+    </bean>
+
+    <sofa:service ref="localConfigLedgerMgr" interface="com.jinninghui.newspiral.ledger.mgr.LocalConfigLedgerMgr">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+</beans>

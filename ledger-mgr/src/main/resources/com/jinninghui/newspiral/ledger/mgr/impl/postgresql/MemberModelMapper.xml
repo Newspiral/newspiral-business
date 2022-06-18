@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.MemberMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PUBLIC_KEY" jdbcType="VARCHAR" property="publicKey"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="ISSUER_ID" jdbcType="VARCHAR" property="issuerId"/>
+        <result column="EXTENDED_DATA" jdbcType="VARCHAR" property="extendedData"/>
+        <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId"/>
+        <!--<result column="CERTIFICATE_CER_FILE" jdbcType="LONGVARCHAR" property="certificateCerFile"/>-->
+        <result column="CERTIFICATE_CER_FILE" jdbcType="VARCHAR" property="certificateCerFile"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="SIGN_ALGORITHM" jdbcType="VARCHAR" property="signAlgorithm"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID,PUBLIC_KEY, NAME,ISSUER_ID,EXTENDED_DATA,CHANNEL_ID,CERTIFICATE_CER_FILE, CREATE_TIME, UPDATE_TIME, STATUS,SIGN_ALGORITHM
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+        where ID = #{memberId,jdbcType=BIGINT}
+    </select>
+    <select id="selectByPublicKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+        where CHANNEL_ID =#{channelId,jdbcType=VARCHAR} AND  PUBLIC_KEY = #{publicKey,jdbcType=VARCHAR}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+    </select>
+    <select id="selectMembersOfRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT member.* FROM member_role LEFT JOIN member ON member_role.MEMBER_ID = member.ID
+        AND member_role.CHANNEL_ID = member.CHANNEL_ID
+        WHERE member_role.ROLE_ID IN
+        (SELECT role.ROLE_ID FROM role WHERE role.`SHORT_NAME` = #{roleName, jdbcType=VARCHAR})
+         AND member.CHANNEL_ID = #{channelId, jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from MEMBER
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberModel" useGeneratedKeys="true" keyProperty="id">
+    insert into MEMBER ( PUBLIC_KEY, NAME,ISSUER_ID,EXTENDED_DATA,CHANNEL_ID,
+         CERTIFICATE_CER_FILE, CREATE_TIME, UPDATE_TIME, STATUS,SIGN_ALGORITHM
+      )
+    values (#{publicKey,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+     #{issuerId,jdbcType=VARCHAR}, #{extendedData,jdbcType=VARCHAR}, #{channelId,jdbcType=VARCHAR},
+      #{certificateCerFile,jdbcType=LONGVARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP}
+      ,#{status,jdbcType=TINYINT},#{signAlgorithm,jdbcType=VARCHAR}
+      )
+  </insert>
+
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.MemberModel">
+        update MEMBER
+        <set>
+            <if test="publicKey != null">
+                PUBLIC_KEY = #{publicKey,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="issuerId != null">
+                ISSUER_ID = #{issuerId,jdbcType=VARCHAR},
+            </if>
+            <if test="extendedData != null">
+                EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+            </if>
+            <if test="channelId != null">
+                CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateCerFile != null">
+                CERTIFICATE_CER_FILE = #{certificateCerFile,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="signAlgorithm != null">
+                SIGN_ALGORITHM = #{signAlgorithm,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where CHANNEL_ID =#{channelId,jdbcType=VARCHAR} AND  PUBLIC_KEY = #{publicKey,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        select
+        distinct
+        T1.ID, T1.PUBLIC_KEY, T1.NAME,T1.ISSUER_ID,T1.EXTENDED_DATA,T1.CHANNEL_ID,T1.CERTIFICATE_CER_FILE,
+       T1.CREATE_TIME, T1.UPDATE_TIME, T1.STATUS,T1.SIGN_ALGORITHM
+        from MEMBER T1
+        LEFT JOIN MEMBER_ROLE T2 ON T1.ID=T2.MEMBER_ID
+        LEFT JOIN ROLE T3 ON T2.ROLE_ID=T3.ROLE_ID
+        where T1.CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+        <if test="id != null">
+            AND T1.ID = #{id,jdbcType=BIGINT}
+        </if>
+        <if test="roleId != null">
+            AND T3.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="selectByChannelAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+        where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+        <if test="status!= null and status != ''">
+            AND STATUS in (
+                <foreach collection="status.split(',')" item="item" index="index" separator=",">
+                    #{item}
+                </foreach>
+                )
+        </if>
+    </select>
+    <select id="selectOrganziationMember" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+        where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+        and ISSUER_ID =#{issuerId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByChannelId" parameterType="java.lang.String">
+    delete from MEMBER
+    where CHANNEL_ID = #{channelId,jdbcType=VARCHAR}
+  </delete>
+    <select id="selectBykey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from MEMBER
+        where CHANNEL_ID=#{channelId} and PUBLIC_KEY=#{publicKey}
+    </select>
+</mapper>

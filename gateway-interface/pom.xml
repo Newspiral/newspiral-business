@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>newspiral-business</artifactId>
+        <groupId>com.jinninghui.newspiral</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jinninghui.newspiral</groupId>
+    <artifactId>gateway-interface</artifactId>
+    <packaging>jar</packaging>
+    <version>${ns.package.version}</version>
+    <description>定义一个节点程序对外提供的接口，也是一个Gateway实现模块需要实现的接口，因此SDK模块需要依赖这个Module，P2P模块也需要依赖这个Module</description>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>common-entity</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+
+<!--        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>consensus-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dsp-snapshots</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

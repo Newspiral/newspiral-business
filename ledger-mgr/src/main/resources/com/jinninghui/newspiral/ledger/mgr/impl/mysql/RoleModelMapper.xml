@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.RoleModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="SHORT_NAME" jdbcType="VARCHAR" property="shortName"/>
+        <result column="MEMBER_ADD_STRATEGY" jdbcType="VARCHAR" property="memberAddStrategy"/>
+        <result column="ROLE_FLAG" jdbcType="INTEGER" property="roleFlag"/>
+        <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId"/>
+        <result column="EXTENDED_DATA" jdbcType="VARCHAR" property="extendedData"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="MEMBER_DEL_STRATEGY" jdbcType="VARCHAR" property="memberDelStrategy"/>
+        <result column="STATE" jdbcType="INTEGER" property="state"/>
+        <result column="AUTH_ID" jdbcType="VARCHAR" property="authId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, ROLE_ID, NAME, SHORT_NAME, MEMBER_ADD_STRATEGY,ROLE_FLAG,CHANNEL_ID,REMARK,EXTENDED_DATA, CREATE_TIME, UPDATE_TIME,MEMBER_DEL_STRATEGY,STATE,AUTH_ID
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ROLE
+        where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ROLE
+        where (NAME=#{name,jdbcType=VARCHAR} OR SHORT_NAME = #{shortName,jdbcType=VARCHAR})
+        <if test="roleId != null">
+            AND ROLE_ID = #{roleId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ROLE
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+     update ROLE set state = 2 , update_time = now()
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </delete>
+    <select id="selectByRoleFlag" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ROLE where ROLE_FLAG= #{roleFlag,jdbcType=INTEGER}
+    </select>
+    <select id="selectByChannel" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ROLE where CHANNEL_ID= #{channelId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectSystemRolesAndCustomRolesByChannelId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ROLE
+        where (CHANNEL_ID= #{channelId,jdbcType=VARCHAR} or CHANNEL_ID='')
+    </select>
+    <!--根据输入参数查询该通道中是否存在以该名称命名的角色-->
+    <select id="selectRoleByChannelIdandParams" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ROLE
+        where (NAME = #{name,jdbcType=VARCHAR} OR SHORT_NAME = #{shortName,jdbcType=VARCHAR})
+        AND (CHANNEL_ID= #{channelId,jdbcType=VARCHAR} OR CHANNEL_ID='')
+    </select>
+    <!--根据channelId和state进行通道列表查询-->
+    <select id="selectByChannelIdAndRoleState" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ROLE where CHANNEL_ID= #{channelId,jdbcType=VARCHAR} AND STATE = #{state,jdbcType=INTEGER}
+    </select>
+    <select id="selectByRoleFalgAndState" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ROLE where ROLE_FLAG= #{roleFlag,jdbcType=INTEGER} AND STATE = #{state,jdbcType=INTEGER}
+    </select>
+    <!--根据channelId和其他角色参数查询角色-->
+    <select id="selectByChannelIdAndRoleParams" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ROLE
+        where (CHANNEL_ID= #{channelId,jdbcType=VARCHAR} or CHANNEL_ID='')
+        <if test="roleId != null and roleId != ''">
+            and ROLE_ID = #{roleId,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name != ''">
+            and NAME = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="shortName != null and shortName != ''">
+            and SHORT_NAME = #{shortName,jdbcType=VARCHAR}
+        </if>
+        LIMIT 0,1
+    </select>
+    <!--根据通道id和状态查询所有的角色列表-->
+    <select id="selectRoleListByChannelIdAndState" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from role
+        where (CHANNEL_ID= #{channelId,jdbcType=VARCHAR} or CHANNEL_ID='')
+        AND STATE in
+        <if test="state != null">
+            <foreach collection="state" item="state" open="(" separator="," close=")">
+                #{state}
+            </foreach>
+        </if>
+    </select>
+
+
+    <insert id="insert" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.RoleModel">
+    replace into ROLE ( ROLE_ID, NAME, SHORT_NAME, MEMBER_ADD_STRATEGY,ROLE_FLAG,CHANNEL_ID,
+    EXTENDED_DATA,REMARK, CREATE_TIME, UPDATE_TIME,MEMBER_DEL_STRATEGY,STATE,AUTH_ID )
+    values (#{roleId, jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR},
+     #{memberAddStrategy,jdbcType=VARCHAR}, #{roleFlag,jdbcType=INTEGER}, #{channelId,jdbcType=VARCHAR},
+      #{extendedData,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP}
+      , #{memberDelStrategy,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{authId,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.RoleModel">
+        update ROLE
+        <set>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="shortName != null">
+                SHORT_NAME = #{shortName,jdbcType=VARCHAR},
+            </if>
+            <if test="memberAddStrategy != null">
+                MEMBER_ADD_STRATEGY = #{memberAddStrategy,jdbcType=VARCHAR},
+            </if>
+            <if test="roleFlag != null">
+                ROLE_FLAG = #{roleFlag,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null">
+                CHANNEL_ID = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="extendedData != null">
+                EXTENDED_DATA = #{extendedData,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="memberDelStrategy != null">
+                MEMBER_DEL_STRATEGY = #{memberDelStrategy,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                STATE = #{state,jdbcType=INTEGER},
+            </if>
+            AUTH_ID = #{authId,jdbcType=VARCHAR},
+        </set>
+        where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </update>
+    <select id="selectByMemberId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    T1.ROLE_ID, T1.NAME, T1.SHORT_NAME, T1.MEMBER_ADD_STRATEGY,T1.MEMBER_DEL_STRATEGY,T1.ROLE_FLAG,T1.CHANNEL_ID
+    ,T1.EXTENDED_DATA,T1.REMARK, T1.CREATE_TIME, T1.UPDATE_TIME, T1.MEMBER_DEL_STRATEGY, T1.STATE, T1.AUTH_ID
+    from ROLE T1
+    JOIN MEMBER_ROLE T2 on  T1.ROLE_ID=T2.ROLE_ID
+     where T2.MEMBER_ID= #{memberId,jdbcType=BIGINT} and T1.STATE=1
+  </select>
+
+
+</mapper>

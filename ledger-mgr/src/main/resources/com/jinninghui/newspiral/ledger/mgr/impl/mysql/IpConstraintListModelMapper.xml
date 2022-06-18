@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.IpConstraintListMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.IpConstraintListModel">
+        <id column="ID" jdbcType="INTEGER" property="id" />
+        <result column="IP_ADDR" jdbcType="VARCHAR" property="ipAddr" />
+        <result column="CONSTRAINT_TYPE" jdbcType="VARCHAR" property="constraintType" />
+        <result column="ACTIVE" jdbcType="VARCHAR" property="active" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID,IP_ADDR,CONSTRAINT_TYPE,ACTIVE, REMARK,CREATE_TIME,UPDATE_TIME
+    </sql>
+
+    <!--批量插入限流名单-->
+    <insert id="batchInsertForIpConstraintList">
+        replace into ip_constraint_list(IP_ADDR,CONSTRAINT_TYPE,ACTIVE, REMARK,
+        CREATE_TIME,UPDATE_TIME)
+        values
+        <foreach collection="list" item="record" index="index" separator=",">
+            (#{record.ipAddr,jdbcType=VARCHAR},#{record.constraintType,jdbcType=VARCHAR},
+            #{record.active,jdbcType=VARCHAR},#{record.remark,jdbcType=VARCHAR},
+            #{record.createTime,jdbcType=TIMESTAMP},#{record.updateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <!--批量修改限流名单-->
+    <update id="updateForIpConstraintList" parameterType="java.util.List">
+        <foreach collection="list" item="record" index="index"  open="" close="" separator=",">
+            update ip_constraint_list
+            set
+            <if test="record.active != null and record.active !=''">
+                ACTIVE = #{record.active,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null and record.remark != ''">
+                REMARK = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            IP_ADDR = #{record.ipAddr,jdbcType=VARCHAR}
+            WHERE IP_ADDR = #{record.ipAddr,jdbcType=VARCHAR}
+            and CONSTRAINT_TYPE = #{record.constraintType,jdbcType=VARCHAR};
+        </foreach>
+    </update>
+
+    <select id="selectBlackList" resultType="java.lang.String">
+        select
+        IP_ADDR
+        from ip_constraint_list
+        WHERE CONSTRAINT_TYPE = 'NoAccess' and ACTIVE = '1';
+    </select>
+
+    <select id="selectWhiteList" resultType="java.lang.String">
+        select
+        IP_ADDR
+        from ip_constraint_list
+        WHERE CONSTRAINT_TYPE = 'PeerAccess' and ACTIVE = '1';
+    </select>
+
+    <select id="selectByIpAddrAndConstraintTyep" resultType="java.lang.String">
+        select
+        IP_ADDR
+        from ip_constraint_list
+        WHERE
+        IP_ADDR = #{ipAddr} and CONSTRAINT_TYPE = #{constraintType};
+    </select>
+
+    <select id="selectInterfaceByClassName" resultType="int">
+        select count(CLASS_NAME)
+        from interface
+        where CLASS_NAME = #{className};
+    </select>
+
+    <select id="selectInterfaceByMethodName" resultType="int">
+        select count(METHOD_NAME)
+        from interface
+        where METHOD_NAME = #{methodName};
+    </select>
+</mapper>

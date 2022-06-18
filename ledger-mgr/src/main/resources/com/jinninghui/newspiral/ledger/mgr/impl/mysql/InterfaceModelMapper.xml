@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.InterfaceMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.InterfaceModel">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="CLASS_NAME" jdbcType="VARCHAR" property="className"/>
+        <result column="METHOD_NAME" jdbcType="VARCHAR" property="methodName"/>
+        <result column="LIMIT_ACCESS" jdbcType="VARCHAR" property="limitAccess"/>
+        <result column="CREATE_TOKEN_RATE" jdbcType="INTEGER" property="createTokenRate"/>
+        <result column="WAIT_TOKEN_TIME" jdbcType="INTEGER" property="waitTokenTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID,CLASS_NAME,METHOD_NAME,LIMIT_ACCESS,CREATE_TOKEN_RATE,WAIT_TOKEN_TIME
+    </sql>
+
+    <!--按照接口所在类，进行批量的限流-->
+    <update id="updateClassLimitParam" parameterType="com.jinninghui.newspiral.ledger.mgr.impl.domain.InterfaceModel" >
+        update interface
+         set
+         <if test="limitAccess !=null ">
+             LIMIT_ACCESS = #{limitAccess,jdbcType = VARCHAR},
+         </if>
+         <if test="createTokenRate !=null">
+             CREATE_TOKEN_RATE = #{createTokenRate,jdbcType = INTEGER} ,
+         </if>
+         <if test="waitTokenTime != null">
+             WAIT_TOKEN_TIME = #{waitTokenTime,jdbcType = INTEGER},
+         </if>
+         CLASS_NAME = #{className,jdbcType=VARCHAR}
+        where CLASS_NAME = #{className,jdbcType=VARCHAR};
+    </update>
+
+    <!--批量跟新限流参数-->
+    <update id="batchInsertForLimitParam" parameterType="java.util.List">
+        <foreach collection="list" item="record" index="index" open="" close="" separator=",">
+            update interface
+            set
+            <if test="record.limitAccess !=null ">
+                LIMIT_ACCESS = #{record.limitAccess,jdbcType = VARCHAR},
+            </if>
+            <if test="record.createTokenRate !=null">
+                CREATE_TOKEN_RATE = #{record.createTokenRate,jdbcType = INTEGER} ,
+            </if>
+            <if test="record.waitTokenTime != null">
+                WAIT_TOKEN_TIME = #{record.waitTokenTime,jdbcType = INTEGER},
+            </if>
+            CLASS_NAME = #{record.className,jdbcType=VARCHAR}
+            where CLASS_NAME = #{record.className,jdbcType=VARCHAR}
+            and METHOD_NAME = #{record.methodName,jdbcType = VARCHAR};
+        </foreach>
+    </update>
+
+    <!--查询需要限流的所有接口-->
+    <select id="selectLimitParamMethods" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from interface where LIMIT_ACCESS = '1';
+    </select>
+
+    <!--根据类名查找类下所有需要限流的方法参数-->
+    <select id="selectLimitParamMethodByClassName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from interface
+        where CLASS_NAME = #{className,jdbcType=VARCHAR}
+        and LIMIT_ACCESS = '1'
+        and CREATE_TOKEN_RATE &gt; 0;
+    </select>
+
+    <!--根据类名和方法名查找限流参数-->
+    <select id="selectLimitParamMethodByClassNameAndMethodName" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from interface
+        WHERE CLASS_NAME= #{className,jdbcType=VARCHAR}
+        and METHOD_NAME = #{methodName,jdbcType = VARCHAR};
+    </select>
+
+
+</mapper>

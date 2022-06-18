@@ -1,0 +1,8 @@
+-- 修改state、state_attach表的state_key为text类型，并建立索引
+ALTER TABLE `state`
+MODIFY COLUMN `STATE_KEY`  text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `CHANNEL_ID`,
+DROP INDEX `KEY_UNIQUE`;
+alter table state add index STATE_KEY_INDEX(CHANNEL_ID, STATE_KEY(64));
+
+ALTER TABLE `state_attach`
+MODIFY COLUMN `STATE_KEY`  text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `CHANNEL_ID`;

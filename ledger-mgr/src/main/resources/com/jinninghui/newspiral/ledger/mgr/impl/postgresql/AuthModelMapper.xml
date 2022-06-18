@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.AuthMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.AuthModel">
+        <id column="ID" jdbcType="INTEGER" property="id" />
+        <result column="AUTH_NAME" jdbcType="VARCHAR" property="authName" />
+        <result column="AUTH_CODE" jdbcType="VARCHAR" property="authCode" />
+        <result column="AUTH_DESCRIPTION" jdbcType="VARCHAR" property="authDescription" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, AUTH_NAME, AUTH_CODE, AUTH_DESCRIPTION, CREATE_TIME,UPDATE_TIME
+  </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from auth;
+    </select>
+    <select id="selectIdByMemberInfo" resultType="java.lang.String">
+        select array_to_string(ARRAY(SELECT unnest(array_agg(auth_id))),',') from role where role_id in
+        (select role_id from member_role where member_id in
+        (select id from member where channel_id =#{channelId} and PUBLIC_KEY=#{publicKey} and status = 0));
+    </select>
+
+    <select id="selectIdByInterfaceInfo" resultType="java.lang.String">
+        select array_to_string(ARRAY(SELECT unnest(array_agg(id))), ',')
+        from auth
+        where (select cast(id as varchar)
+               from interface
+               where concat(CLASS_PATH, '.', CLASS_NAME, '.', METHOD_NAME)=#{mthFullName})
+                  = ANY (string_to_array(interface_id, ','));
+    </select>
+
+   <select id="selectAuthById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+       select <include refid="Base_Column_List"/> from auth
+       where ID = #{id,jdbcType=INTEGER}
+   </select>
+    <!--查询所有的权限id-->
+    <select id="selectAuthIds" resultType ="java.lang.Integer">
+        select ID from auth;
+    </select>
+
+    <select id="selectAuthIdByAuthCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select id from auth where AUTH_CODE = #{authCode,jdbcType=VARCHAR}
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinninghui.newspiral.ledger.mgr.impl.mapper.TimeConsumingModelMapper">
+    <resultMap id="BaseResultMap" type="com.jinninghui.newspiral.ledger.mgr.impl.domain.TimeConsumingModel">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="VIEW_NUMBER" jdbcType="BIGINT" property="viewNumber" />
+        <result column="PHASE_ONE" jdbcType="BIGINT" property="phaseOne" />
+        <result column="PHASE_TWO" jdbcType="BIGINT" property="phaseTwo" />
+        <result column="PHASE_THREE" jdbcType="BIGINT" property="phaseThree" />
+        <result column="PHASE_FOUR" jdbcType="BIGINT" property="phaseFour" />
+        <result column="TIMEOUT" jdbcType="BIGINT" property="timeout"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, VIEW_NUMBER, PHASE_ONE,PHASE_TWO,PHASE_THREE,PHASE_FOUR
+  </sql>
+    <select id="selectALL" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from TIME_CONSUMING
+    </select>
+
+    <insert id="insert">
+    insert into TIME_CONSUMING (VIEW_NUMBER, PHASE_ONE,PHASE_TWO,PHASE_THREE,PHASE_FOUR,TIMEOUT,RECEIVE_BLOCK)
+    values ( #{record.viewNumber,jdbcType=BIGINT}, #{record.phaseOne,jdbcType=BIGINT}, #{record.phaseTwo,jdbcType=BIGINT}
+    , #{record.phaseThree,jdbcType=BIGINT}, #{record.phaseFour,jdbcType=BIGINT}, #{record.timeout,jdbcType=BIGINT}, #{record.receiveBlock,jdbcType=BIGINT})
+  </insert>
+
+    <insert id="beachInsert">
+        insert into TIME_CONSUMING (VIEW_NUMBER, PHASE_ONE,PHASE_TWO,PHASE_THREE,PHASE_FOUR,TIMEOUT,RECEIVE_BLOCK)
+        values
+        <foreach collection="list" item="record" index="index" separator=",">
+            ( #{record.viewNumber,jdbcType=BIGINT}, #{record.phaseOne,jdbcType=BIGINT},
+            #{record.phaseTwo,jdbcType=BIGINT}, #{record.phaseThree,jdbcType=BIGINT},#{record.phaseFour,jdbcType=BIGINT}, #{record.timeout,jdbcType=BIGINT},
+            #{record.receiveBlock,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+</mapper>

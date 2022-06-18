@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置需要导出的JVM服务 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://sofastack.io/schema/sofaboot"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://sofastack.io/schema/sofaboot http://sofastack.io/schema/sofaboot.xsd"
+       default-autowire="byName">
+
+
+    <bean id="hotstuffInterface" class="com.jinninghui.newspiral.p2p.impl.hotstuff.HotStuffRPC">
+    </bean>
+
+    <sofa:service ref="hotstuffInterface" interface="com.jinninghui.newspiral.p2p.hotstuff.HotstuffRPCInterface">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+    <bean id="p2pCommunicator" class="com.jinninghui.newspiral.p2p.impl.P2PClientImpl">
+    </bean>
+
+    <sofa:service ref="p2pCommunicator" interface="com.jinninghui.newspiral.p2p.P2pClient">
+        <sofa:binding.jvm/>
+    </sofa:service>
+
+
+    <bean id="serviceForPeerClientMgr" class="com.jinninghui.newspiral.p2p.impl.base.ServiceForPeerClientMgr">
+    </bean>
+
+
+    <bean id="channelClientMgr" class="com.jinninghui.newspiral.p2p.impl.base.ChannelClientMgr" init-method="initDb">
+    </bean>
+
+
+</beans>

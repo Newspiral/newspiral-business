@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>newspiral-business</artifactId>
+        <groupId>com.jinninghui.newspiral</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jinninghui.newspiral</groupId>
+    <artifactId>member-mgr-interface</artifactId>
+    <packaging>jar</packaging>
+    <version>${ns.package.version}</version>
+    <description>成员包含两层含义，第一是各个用户身份，例如某个组织的管理员；第二是某个身份衍生的程序实体，当前仅有peer身份衍生 peer节点程序需要被管理起来，其他的用户身份，例如与普通用户关联的业务系统，则不需被管理起来。
+        节点组成链，因此链的管理也统一在此模块中实现。
+        成员管理模块为认证鉴权模块提供身份支撑
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>common-entity</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dsp-snapshots</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

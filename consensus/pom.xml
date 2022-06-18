@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>newspiral-business</artifactId>
+        <groupId>com.jinninghui.newspiral</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jinninghui.newspiral</groupId>
+    <artifactId>consensus</artifactId>
+    <packaging>jar</packaging>
+    <version>${ns.package.version}</version>
+    <description>共识实现模块</description>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>common-entity</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>security-service</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>p2p-communicator-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>transaction-mgr-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>ledger-mgr-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>security-service-interface</artifactId>
+            <version>${ns.package.version}</version>
+        </dependency>
+
+
+
+        <!-- 外部依赖  -->
+
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>isle-sofa-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>runtime-sofa-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-loader</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jinninghui.newspiral</groupId>
+            <artifactId>ledger-mgr</artifactId>
+            <version>${ns.package.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dsp-snapshots</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
