@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!--<dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>-->
+
+    <parent>
+        <groupId>com.alipay.sofa</groupId>
+        <artifactId>sofaboot-dependencies</artifactId>
+        <version>3.4.2</version>
+    </parent>
+
+    <groupId>com.jinninghui.newspiral</groupId>
+    <artifactId>newspiral-business</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <description>NewSpiral的业务服务父工程</description>
+
+    <modules>
+
+        <module>transaction-mgr-interface</module>
+        <module>transaction-mgr</module>
+        <module>sdk</module>
+        <module>ledger-mgr-interface</module>
+        <module>ledger-mgr</module>
+        <module>common-entity</module>
+        <module>security-service</module>
+        <module>security-service-interface</module>
+        <module>member-mgr-interface</module>
+        <module>p2p-communicator</module>
+        <module>p2p-communicator-interface</module>
+        <module>gateway-interface</module>
+        <module>consensus</module>
+        <module>consensus-interface</module>
+        <module>member-mgr</module>
+    </modules>
+
+    <properties>
+        <rpc.starter.version>6.0.3</rpc.starter.version>
+        <junit.version>4.12</junit.version>
+        <sofa.boot.version>3.4.2</sofa.boot.version>
+        <java.version>1.8</java.version>
+        <rpc.starter.version>6.0.3</rpc.starter.version>
+        <sofa-rpc-all.version>5.7.3</sofa-rpc-all.version>
+        <ns.package.version>2.5.0</ns.package.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- SOFA BOOT相关的包，不需要指定版本号，因为parent设置为了 -->
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>isle-sofa-boot-starter</artifactId>
+                <version>${sofa.boot.version}</version> <!--这个有点奇怪，不配置不行 -->
+            </dependency>
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>rpc-sofa-boot-starter</artifactId>
+                <version>${rpc.starter.version}</version> <!--这个有点奇怪，不配置不行 -->
+            </dependency>
+            <!--            <dependency>
+                            <groupId>com.alipay.sofa</groupId>
+                            <artifactId>sofa-rpc-all</artifactId>
+                            <version>${sofa-rpc-all.version}</version>
+                        </dependency>-->
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>test-sofa-boot-starter</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>healthcheck-sofa-boot-starter</artifactId>
+            </dependency>
+
+
+            <!-- 非SOFABOOT的外部包 -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.61</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.8</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+    </repositories>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+
+    <distributionManagement>
+        <repository>
+            <id>dsp-releases</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dsp-snapshots</id>
+            <url>http://nexus.thed3chain.com:18081/repository/dsp-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
