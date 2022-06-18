@@ -9,6 +9,7 @@ import com.jinninghui.newspiral.ledger.mgr.SmartContractMgr;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -41,11 +42,36 @@ public class SandboxContractMgrImpl implements SmartContractMgr {
         return null;
     }
 
+
+    @Override
+    public String getStrState(String key) {
+        if (!Thread.interrupted()) {
+            try {
+                byte[] state =  executorTX.get().submit(() -> smartContractMgr.getState(key)).get();
+                return new String(state, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                localHandler.get().uncaughtException(Thread.currentThread(),e);
+            }
+        }
+        return null;
+    }
+
     @Override
     public void insertState(String key, byte[] value) {
         if (!Thread.interrupted()) {
             try {
                 executorTX.get().submit(() -> smartContractMgr.insertState(key, value)).get();
+            } catch (Exception e) {
+                localHandler.get().uncaughtException(Thread.currentThread(),e);
+            }
+        }
+    }
+
+    @Override
+    public void insertStrState(String key, String value) {
+        if (!Thread.interrupted()) {
+            try {
+                executorTX.get().submit(() -> smartContractMgr.insertState(key, value.getBytes(StandardCharsets.UTF_8))).get();
             } catch (Exception e) {
                 localHandler.get().uncaughtException(Thread.currentThread(),e);
             }
@@ -63,11 +89,34 @@ public class SandboxContractMgrImpl implements SmartContractMgr {
         }
     }
 
+
+    @Override
+    public void updateStrState(String key, String newValue) {
+        if (!Thread.interrupted()) {
+            try {
+                executorTX.get().submit(() -> smartContractMgr.updateState(key, newValue.getBytes(StandardCharsets.UTF_8))).get();
+            } catch (Exception e) {
+                localHandler.get().uncaughtException(Thread.currentThread(),e);
+            }
+        }
+    }
+
     @Override
     public void putState(String key, byte[] value) {
         if (!Thread.interrupted()) {
             try {
                 executorTX.get().submit(() -> smartContractMgr.putState(key, value)).get();
+            } catch (Exception e) {
+                localHandler.get().uncaughtException(Thread.currentThread(),e);
+            }
+        }
+    }
+
+    @Override
+    public void putStrState(String key, String value) {
+        if (!Thread.interrupted()) {
+            try {
+                executorTX.get().submit(() -> smartContractMgr.putState(key, value.getBytes(StandardCharsets.UTF_8))).get();
             } catch (Exception e) {
                 localHandler.get().uncaughtException(Thread.currentThread(),e);
             }
