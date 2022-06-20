@@ -34,14 +34,14 @@ Newspiral作为工信部信创区块链首批测评通过的联盟链平台，�
 
 ## 软件架构
 与Hyperleger Fabric不同，Newspiral并不区分背书、排序、确认节点，所有参与共识的节点地位完全平等，任意一时刻，均有一个当前视图的主节点负责对一批交易进行排序和执行，然后使用共识算法在多个节点间针对区块达成共识，彻底解决了交易背书成功但共识失败、单区块内不允许存在关联交易等问题。
-具体架构说明，可参考[在线开发者文档](http://docs.jinninghui.com)
+具体架构说明，可参考[在线开发者文档](http://docs.jinninghui.com){target="_blank"}
 
 
 ## 安装教程
-Newspiral提供图形化界面安装以及节点一键部署脚本，详情见[在线开发者文档](http://docs.jinninghui.com)
+Newspiral提供图形化界面安装以及节点一键部署脚本，详情见[在线开发者文档](http://docs.jinninghui.com){target="_blank"}
 
 ## 使用说明
-Newspiral提供完整的接入文档和示例工程，详情见[在线开发者文档](http://docs.jinninghui.com)
+Newspiral提供完整的接入文档和示例工程，详情见[在线开发者文档](http://docs.jinninghui.com){target="_blank"}
 
 ## 参与贡献
 1.  Fork 本仓库
