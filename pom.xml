@@ -3,14 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!--<dependencies>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-    </dependencies>-->
-
     <parent>
         <groupId>com.alipay.sofa</groupId>
         <artifactId>sofaboot-dependencies</artifactId>
@@ -27,7 +19,6 @@
 
         <module>transaction-mgr-interface</module>
         <module>transaction-mgr</module>
-        <module>sdk</module>
         <module>ledger-mgr-interface</module>
         <module>ledger-mgr</module>
         <module>common-entity</module>
@@ -65,21 +56,6 @@
                 <artifactId>rpc-sofa-boot-starter</artifactId>
                 <version>${rpc.starter.version}</version> <!--这个有点奇怪，不配置不行 -->
             </dependency>
-            <!--            <dependency>
-                            <groupId>com.alipay.sofa</groupId>
-                            <artifactId>sofa-rpc-all</artifactId>
-                            <version>${sofa-rpc-all.version}</version>
-                        </dependency>-->
-            <dependency>
-                <groupId>com.alipay.sofa</groupId>
-                <artifactId>test-sofa-boot-starter</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>com.alipay.sofa</groupId>
-                <artifactId>healthcheck-sofa-boot-starter</artifactId>
-            </dependency>
-
-
             <!-- 非SOFABOOT的外部包 -->
             <dependency>
                 <groupId>junit</groupId>
@@ -91,12 +67,12 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.61</version>
+                <version>${fastjson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.8</version>
+                <version>${lombok.version}</version>
             </dependency>
 
         </dependencies>
