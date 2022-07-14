@@ -59,11 +59,20 @@ public class ConsensusContext {
      * 某个QC需要收集到的最小节点支持数，适用于GenericQC中的BlockVoteMsg，也适用于NewViewMsg
      */
     int qcMinNodeCnt;
-
+    
+    /**
+      *上一次超时的视图号
+      */
     Long latestTimeOutViewNo;
-
+    
+    /**
+     * 本地节点上一次更新到的区块高度
+     */
     Long latestChannelUpdateHeight = 0L;
-
+    
+    /**
+     * 当前超时时间
+     */
     Long currentTimeOut;
 
     /**
@@ -81,7 +90,10 @@ public class ConsensusContext {
      * 节点自身
      */
     Peer myself;
-
+    
+    /**
+     * 当前视图的leader节点
+     */
     Peer currLeader;
 
     /**
